@@ -34,6 +34,7 @@ def process_hegesztes(data: pd.DataFrame, norms: pd.DataFrame) -> pd.DataFrame:
     norms['D'] = norms['D'].astype(float)
     norms['v'] = norms['v'].astype(float)
     data['Munkaóra'] = data[['Külső átmérő', 'Falvastagság', 'Típus']].apply(lambda x: interpolate_2d(norms['D'], norms['v'], norms[x[2]], x[0], x[1]), axis=1)
+    logging.info(f'Processed {len(data)} rows of hegesztes')
     return data
 
 
@@ -43,6 +44,7 @@ def process_csotarto(data: pd.DataFrame, norms: pd.DataFrame) -> pd.DataFrame:
     data = data.dropna(subset=['Súly', 'Típus'])
     norms['kg-ig'] = norms['kg-ig'].astype(float)
     data['Munkaóra'] = data[['Súly', 'Típus']].apply(lambda x: x[0] * interpolate_1d(norms['kg-ig'], norms[x[1]], x[0]), axis=1)
+    logging.info(f'Processed {len(data)} rows of csotarto')
     return data
 
 
@@ -55,6 +57,7 @@ def process_csovezetek(data: pd.DataFrame, norms: pd.DataFrame) -> pd.DataFrame:
     norms['D'] = norms['D'].astype(float)
     norms['v'] = norms['v'].astype(float)
     data['Munkaóra'] = data[['Külső átmérő', 'Falvastagság', 'Típus', 'Hossz']].apply(lambda x: x[3] * interpolate_2d(norms['D'], norms['v'], norms[x[2]], x[0], x[1]), axis=1)
+    logging.info(f'Processed {len(data)} rows of csovezetek')
     return data
 
 
@@ -63,18 +66,39 @@ def process_karimaszerelés(data: pd.DataFrame, norms: pd.DataFrame) -> pd.DataF
     #drop rows with empty values
     data = data.dropna(subset=['Típus', 'DN'])
     data['DN'] = data['DN'].astype(float)
-    data['Típus'] = data['Típus'].apply(lambda x: x.upper() if 'pn' in x.lower() else x)
-    # change PN64-140 to PN64-160
-    data.loc[data['Típus'] == 'PN64-140', 'Típus'] = 'PN64-160'
-    # change PN14-40 to PN10-40
-    data.loc[data['Típus'] == 'PN14-40', 'Típus'] = 'PN10-40'
+    data['Nyomásfokozat'] = data['Nyomásfokozat'].astype(float)
+    #data['Típus'] = data['Típus'].apply(lambda x: x.upper() if 'pn' in x.lower() else x)
+    # # change PN64-140 to PN64-160
+    # data.loc[data['Típus'] == 'PN64-140', 'Típus'] = 'PN64-160'
+    # # change PN14-40 to PN10-40
+    # data.loc[data['Típus'] == 'PN14-40', 'Típus'] = 'PN10-40'
     norms = norms[norms['DN'] != '']
-    norms['DN'] = norms['DN'].astype(float)
-    data['Munkaóra'] = data[['DN', 'Típus']].apply(lambda x: interpolate_1d(norms['DN'], norms[x[1]], x[0]), axis=1)
+    norms = norms.astype(float)
+
+    norms['Összeépített vakperem - PN10-40'] = norms['Összeépített vakperem'] + norms['PN10-40']
+    norms['Összeépített vakperem - PN64-160'] = norms['Összeépített vakperem'] + norms['PN64-160']
+    norms['Összeépített vakperem - PN250-320'] = norms['Összeépített vakperem'] + norms['PN250-320']
+
+    data.loc[(data['Típus'] == 'Összeépített vakperem') & (data['Nyomásfokozat'] <= 40), 'Típus'] = 'Összeépített vakperem - PN10-40'
+    data.loc[(data['Típus'] == 'Összeépített vakperem') & (data['Nyomásfokozat'] > 40) & (data['Nyomásfokozat'] <= 160), 'Típus'] = 'Összeépített vakperem - PN64-160'
+    data.loc[(data['Típus'] == 'Összeépített vakperem') & (data['Nyomásfokozat'] > 160), 'Típus'] = 'Összeépített vakperem - PN250-320'
+
+    data['Munkaóra'] = data[['DN','Típus']].apply(lambda x: interpolate_1d(norms['DN'], norms[x[1]], x[0]), axis=1)
+    logging.info(f'Processed {len(data)} rows of karimaszerelés')
+    return data
+
+def process_nyomasproba(data: pd.DataFrame, norms: pd.DataFrame) -> pd.DataFrame:
+    data['Külső átmérő'] = data['Külső átmérő'].astype(float)
+    data['Hossz'] = data['Hossz'].astype(float)
+    data = data.dropna(subset=['Külső átmérő', 'Típus'])
+    norms['D'] = norms['D'].astype(float)
+    data['Munkaóra'] = data[['Külső átmérő', 'Típus', 'Hossz']].apply(lambda x: x[2] * interpolate_1d(norms['D'], norms[x[1]], x[0]), axis=1)
+    logging.info(f'Processed {len(data)} rows of nyomasproba')
     return data
 
 
-def process_sheets(service_account_file: str, torzssheet_id: str, normasheet_id: str, entry_ids: List[str] = [], sheets: List[str] = ['Csotarto', 'Hegesztes', 'Csovezetek', 'Karimaszereles']) -> None:
+
+def process_sheets(service_account_file: str, torzssheet_id: str, normasheet_id: str, entry_ids: List[str] = [], sheets: List[str] = ['Csotarto', 'Hegesztes', 'Csovezetek', 'Karimaszereles', 'Nyomasproba']) -> None:
 
     service = get_service(service_account_file)
 
@@ -103,6 +127,8 @@ def process_sheets(service_account_file: str, torzssheet_id: str, normasheet_id:
             data = process_csovezetek(data, norms)
         elif sheet == 'Karimaszereles':
             data = process_karimaszerelés(data, norms)
+        elif sheet == 'Nyomasproba':
+            data = process_nyomasproba(data, norms)
         else:
             raise ValueError('Invalid sheet name')
 
