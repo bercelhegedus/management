@@ -99,7 +99,7 @@ def process_nyomasproba(data: pd.DataFrame, norms: pd.DataFrame) -> pd.DataFrame
 
 
 
-def process_sheets(service_account_file: str, torzssheet_id: str, normasheet_id: str, entry_ids: List[str] = [], sheets: List[str] = ['Csotarto', 'Hegesztes', 'Csovezetek', 'Karimaszereles', 'Nyomasproba']) -> None:
+def process_sheets(service_account_file: str, torzssheet_id: str, normasheet_id: str,update_blanks = False, ids_to_update: List[str] = [], sheets: List[str] = ['Csotarto', 'Hegesztes', 'Csovezetek', 'Karimaszereles', 'Nyomasproba']) -> None:
 
     service = get_service(service_account_file)
 
@@ -116,9 +116,12 @@ def process_sheets(service_account_file: str, torzssheet_id: str, normasheet_id:
 
         logging.info(f'{sheet} data loaded')
 
-        if entry_ids:
+        if not update_blanks:
+            ids_to_update = ids_to_update + data[data['Munkaóra'].isna()]['ID'].tolist()
+
+        if ids_to_update:
             original_data = data.copy()
-            data = data[data['ID'].isin(entry_ids)]
+            data = data[data['ID'].isin(ids_to_update)]
 
         if data.empty:
             continue
@@ -137,7 +140,7 @@ def process_sheets(service_account_file: str, torzssheet_id: str, normasheet_id:
         else:
             raise ValueError('Invalid sheet name')
 
-        if entry_ids:
+        if ids_to_update:
             for _, row in data.iterrows():
                 row_id = row['ID']
                 row_index = original_data.index[original_data['ID'] == row_id].tolist()[0]
