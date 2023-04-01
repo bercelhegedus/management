@@ -38,7 +38,7 @@ def webhook():
         sheets = data.get('sheets', ['Csotarto', 'Hegesztes', 'Csovezetek', 'Karimaszereles'])
 
         try:
-            thread = threading.Thread(target=process_sheets, args=(SERVICE_ACCOUNT_FILE, TORZSSHEET_ID, NORMASHEET_ID, entry_ids, sheets, update_blanks=True))
+            thread = threading.Thread(target=process_sheets, args=(SERVICE_ACCOUNT_FILE, TORZSSHEET_ID, NORMASHEET_ID, entry_ids, sheets), kwargs={'update_blanks': True})
             thread.start()
             logging.info("Update started")
             return jsonify({'message': 'Update started.'}), 200
