@@ -4,14 +4,25 @@ import threading
 from normhours import process_sheets
 import logging
 
+LOG_FILE = 'app.log'
+logging.basicConfig(level=logging.INFO, filename=LOG_FILE, filemode='a')
+
 app = Flask(__name__)
 
 @app.route('/')
 def home():
+    logging.info(f"Request: {request.method} {request.path}")
     return "Welcome to the Flask App! This is a webhook application for processing Google Sheets."
+
+@app.route('/logs')
+def show_logs():
+    with open(LOG_FILE, 'r') as log_file:
+        logs = log_file.read().splitlines()
+    return render_template('logs.html', logs=logs)
 
 @app.route('/webhook', methods=['POST'])
 def webhook():
+    logging.info(f"Request: {request.method} {request.path} {request.data}")
 
     SERVICE_ACCOUNT_FILE = 'service_account.json'
     TORZSSHEET_ID = '1LtCsUPBqGYpnEZXyKFFoaPaeFfe1CLU-O9wiTMGqJUE'

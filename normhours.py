@@ -9,6 +9,7 @@ from typing import List, Dict, Tuple, Optional, Union
 import pdb
 import traceback
 from google_sheets import get_service, process_table, upload_table
+from populate_inspections import update_inspections
 
 
 
@@ -102,6 +103,9 @@ def process_sheets(service_account_file: str, torzssheet_id: str, normasheet_id:
 
     service = get_service(service_account_file)
 
+    if 'Csovezetek' in sheets and 'Nyomasproba' not in sheets:
+        sheets.append('Nyomasproba')
+
     for sheet in sheets:
 
         logging.info(f'Processing {sheet}')
@@ -124,6 +128,7 @@ def process_sheets(service_account_file: str, torzssheet_id: str, normasheet_id:
         elif sheet == 'Hegesztes':
             data = process_hegesztes(data, norms)
         elif sheet == 'Csovezetek':
+            update_inspections(csovezetek_ids_to_update=data['ID'].tolist())
             data = process_csovezetek(data, norms)
         elif sheet == 'Karimaszereles':
             data = process_karimaszerelés(data, norms)
