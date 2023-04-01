@@ -1,10 +1,14 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, render_template
 import json
 import threading
 from normhours import process_sheets
 import logging
 
 app = Flask(__name__)
+
+@app.route('/')
+def home():
+    return "Welcome to the Flask App! This is a webhook application for processing Google Sheets."
 
 @app.route('/webhook', methods=['POST'])
 def webhook():
@@ -28,7 +32,6 @@ def webhook():
             return jsonify({'message': 'Update started.'}), 200
         except Exception as e:
             return jsonify({'message': f'Error: {str(e)}'}), 500
-
 
     return jsonify({'message': 'Invalid request.'}), 400
 
