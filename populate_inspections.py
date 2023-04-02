@@ -7,8 +7,10 @@ from google_sheets import get_service, process_table, upload_table
 import traceback
 import pdb    
 import logging
+from logger import init_logger
 
-logger = logging.getLogger(__name__)
+LOG_FILE = 'app.log'
+init_logger(LOG_FILE, level=logging.DEBUG)
 
 def update_inspections(csovezetek_ids_to_update=[], force_update=False):
     SERVICE_ACCOUNT_FILE = 'service_account.json'

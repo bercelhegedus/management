@@ -10,8 +10,10 @@ import pdb
 import traceback
 from google_sheets import get_service, process_table, upload_table
 from populate_inspections import update_inspections
+from logger import init_logger
 
-logger = logging.getLogger(__name__)
+LOG_FILE = 'app.log'
+init_logger(LOG_FILE, level=logging.DEBUG)
 
 
 def interpolate_1d(regressor: pd.Series, target: pd.Series, x: float) -> float:

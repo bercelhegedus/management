@@ -4,8 +4,10 @@ from googleapiclient.discovery import build
 import logging
 from typing import List, Dict, Tuple, Optional, Union
 import xlsxwriter
+from logger import init_logger
 
-logger = logging.getLogger(__name__)
+LOG_FILE = 'app.log'
+init_logger(LOG_FILE, level=logging.DEBUG)
 
 def get_service(service_account_file) -> object:
     scopes = ['https://www.googleapis.com/auth/spreadsheets']

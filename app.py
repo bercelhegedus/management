@@ -3,10 +3,10 @@ import json
 import threading
 from normhours import process_sheets
 import logging
+from logger import init_logger
 
 LOG_FILE = 'app.log'
-logging.basicConfig(level=logging.DEBUG, filename=LOG_FILE, filemode='a',
-                    format='%(asctime)s [%(levelname)s]: %(message)s')   
+init_logger(LOG_FILE, level=logging.DEBUG)
 
 app = Flask(__name__)
 

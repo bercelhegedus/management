@@ -6,8 +6,10 @@ import os
 import sys
 import traceback
 import logging
+from logger import init_logger
 
-logger = logging.getLogger(__name__)
+LOG_FILE = 'app.log'
+init_logger(LOG_FILE, level=logging.DEBUG)
 
 
 def main():
