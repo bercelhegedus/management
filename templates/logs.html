@@ -1,3 +1,4 @@
+<!-- logs.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -6,11 +7,10 @@
     <title>Logs</title>
 </head>
 <body>
-    <h1>Application Logs</h1>
-    <pre>
-{% for log in logs %}
-{{ log }}
-{% endfor %}
-    </pre>
+    <h1>Logs</h1>
+    <div id="logs-container">
+        <!-- Logs will be inserted here -->
+    </div>
+    <script src="{{ url_for('static', filename='logs.js') }}"></script>
 </body>
 </html>
