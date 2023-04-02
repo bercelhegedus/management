@@ -12,7 +12,7 @@ import logging
 from logger import init_logger
 
 LOG_FILE = 'app.log'
-init_logger(LOG_FILE, level=logging.DEBUG)
+logger = init_logger(LOG_FILE, level=logging.DEBUG)
 
 def create_summary_table(dataframes, output_file):
     # Combine data from all sheets into a single DataFrame

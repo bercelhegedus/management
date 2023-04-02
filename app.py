@@ -6,13 +6,13 @@ import logging
 from logger import init_logger
 
 LOG_FILE = 'app.log'
-init_logger(LOG_FILE, level=logging.DEBUG)
+logger = init_logger(LOG_FILE, level=logging.DEBUG)
 
 app = Flask(__name__)
 
 @app.route('/')
 def home():
-    logging.info(f"Request: {request.method} {request.path}")
+    logger.info(f"Request: {request.method} {request.path}")
     return "Welcome to the Flask App! This is a webhook application for processing Google Sheets."
 
 @app.route('/logs')
@@ -23,7 +23,7 @@ def show_logs():
 
 @app.route('/webhook', methods=['POST'])
 def webhook():
-    logging.info(f"Request: {request.method} {request.path} {request.data}")
+    logger.info(f"Request: {request.method} {request.path} {request.data}")
 
     SERVICE_ACCOUNT_FILE = 'service_account.json'
     TORZSSHEET_ID = '1LtCsUPBqGYpnEZXyKFFoaPaeFfe1CLU-O9wiTMGqJUE'
@@ -31,7 +31,7 @@ def webhook():
 
     if request.method == 'POST':
         data = request.get_json(force=True)
-        logging.info(data)
+        logger.info(data)
         entry_ids = data.get('entry_ids', [])
         if isinstance(entry_ids, str):
             entry_ids = [entry_ids]
@@ -40,7 +40,7 @@ def webhook():
         try:
             thread = threading.Thread(target=process_sheets, args=(SERVICE_ACCOUNT_FILE, TORZSSHEET_ID, NORMASHEET_ID, entry_ids, sheets), kwargs={'update_blanks': True})
             thread.start()
-            logging.info("Update started")
+            logger.info("Update started")
             return jsonify({'message': 'Update started.'}), 200
         except Exception as e:
             return jsonify({'message': f'Error: {str(e)}'}), 500

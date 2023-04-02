@@ -7,7 +7,7 @@ import xlsxwriter
 from logger import init_logger
 
 LOG_FILE = 'app.log'
-init_logger(LOG_FILE, level=logging.DEBUG)
+logger = init_logger(LOG_FILE, level=logging.DEBUG)
 
 def get_service(service_account_file) -> object:
     scopes = ['https://www.googleapis.com/auth/spreadsheets']

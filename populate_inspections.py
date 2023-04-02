@@ -10,7 +10,7 @@ import logging
 from logger import init_logger
 
 LOG_FILE = 'app.log'
-init_logger(LOG_FILE, level=logging.DEBUG)
+logger = init_logger(LOG_FILE, level=logging.DEBUG)
 
 def update_inspections(csovezetek_ids_to_update=[], force_update=False):
     SERVICE_ACCOUNT_FILE = 'service_account.json'
