@@ -15,12 +15,18 @@ def home():
     logger.info(f"Request: {request.method} {request.path}")
     return "Welcome to the Flask App! This is a webhook application for processing Google Sheets."
 
-@app.route('/logs')
-def show_logs():
-    with open(LOG_FILE, 'r') as log_file:
-        logs = log_file.read().splitlines()
-    return jsonify({'logs': logs})
 
+@app.route('/logs')
+def logs():
+    try:
+        with open(LOG_FILE, 'r') as log_file:
+            logs = log_file.readlines()
+            logs.reverse()  # Reverse the order of the logs
+            logs_html = "<br>".join(logs)  # Convert logs to a single HTML string
+        return logs_html
+    except Exception as e:
+        logger.error(f"Error while reading logs: {str(e)}")
+        return f"Error while reading logs: {str(e)}", 500
 
 
 @app.route('/webhook', methods=['POST'])

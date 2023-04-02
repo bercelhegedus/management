@@ -1,0 +1,56 @@
+2023-04-03 01:31:35,192 [INFO]: Request: GET /
+2023-04-03 01:31:35,192 [INFO]: Request: GET /
+2023-04-03 01:31:35,192 [INFO]: Request: GET /
+2023-04-03 01:31:35,192 [INFO]: Request: GET /
+2023-04-03 01:32:33,384 [INFO]: Request: POST /webhook b'{"entry_ids": "12345", "sheets": ["Csotarto", "Hegesztes", "Csovezetek", "Karimaszereles"]}'
+2023-04-03 01:32:33,384 [INFO]: Request: POST /webhook b'{"entry_ids": "12345", "sheets": ["Csotarto", "Hegesztes", "Csovezetek", "Karimaszereles"]}'
+2023-04-03 01:32:33,384 [INFO]: Request: POST /webhook b'{"entry_ids": "12345", "sheets": ["Csotarto", "Hegesztes", "Csovezetek", "Karimaszereles"]}'
+2023-04-03 01:32:33,384 [INFO]: Request: POST /webhook b'{"entry_ids": "12345", "sheets": ["Csotarto", "Hegesztes", "Csovezetek", "Karimaszereles"]}'
+2023-04-03 01:32:33,384 [INFO]: {'entry_ids': '12345', 'sheets': ['Csotarto', 'Hegesztes', 'Csovezetek', 'Karimaszereles']}
+2023-04-03 01:32:33,384 [INFO]: {'entry_ids': '12345', 'sheets': ['Csotarto', 'Hegesztes', 'Csovezetek', 'Karimaszereles']}
+2023-04-03 01:32:33,384 [INFO]: {'entry_ids': '12345', 'sheets': ['Csotarto', 'Hegesztes', 'Csovezetek', 'Karimaszereles']}
+2023-04-03 01:32:33,384 [INFO]: {'entry_ids': '12345', 'sheets': ['Csotarto', 'Hegesztes', 'Csovezetek', 'Karimaszereles']}
+2023-04-03 01:32:33,384 [INFO]: Update started
+2023-04-03 01:32:33,384 [INFO]: Update started
+2023-04-03 01:32:33,384 [INFO]: Update started
+2023-04-03 01:32:33,384 [INFO]: Update started
+2023-04-03 01:32:33,393 [DEBUG]: Processing Csotarto
+2023-04-03 01:32:33,393 [DEBUG]: Processing Csotarto
+2023-04-03 01:32:33,393 [DEBUG]: Processing Csotarto
+2023-04-03 01:32:33,393 [DEBUG]: Processing Csotarto
+2023-04-03 01:32:38,739 [DEBUG]: Csotarto data loaded
+2023-04-03 01:32:38,739 [DEBUG]: Csotarto data loaded
+2023-04-03 01:32:38,739 [DEBUG]: Csotarto data loaded
+2023-04-03 01:32:38,739 [DEBUG]: Csotarto data loaded
+2023-04-03 01:32:38,748 [DEBUG]: Processing Hegesztes
+2023-04-03 01:32:38,748 [DEBUG]: Processing Hegesztes
+2023-04-03 01:32:38,748 [DEBUG]: Processing Hegesztes
+2023-04-03 01:32:38,748 [DEBUG]: Processing Hegesztes
+2023-04-03 01:32:40,083 [DEBUG]: Hegesztes data loaded
+2023-04-03 01:32:40,083 [DEBUG]: Hegesztes data loaded
+2023-04-03 01:32:40,083 [DEBUG]: Hegesztes data loaded
+2023-04-03 01:32:40,083 [DEBUG]: Hegesztes data loaded
+2023-04-03 01:32:40,090 [DEBUG]: Processing Csovezetek
+2023-04-03 01:32:40,090 [DEBUG]: Processing Csovezetek
+2023-04-03 01:32:40,090 [DEBUG]: Processing Csovezetek
+2023-04-03 01:32:40,090 [DEBUG]: Processing Csovezetek
+2023-04-03 01:32:41,007 [DEBUG]: Csovezetek data loaded
+2023-04-03 01:32:41,007 [DEBUG]: Csovezetek data loaded
+2023-04-03 01:32:41,007 [DEBUG]: Csovezetek data loaded
+2023-04-03 01:32:41,007 [DEBUG]: Csovezetek data loaded
+2023-04-03 01:32:41,010 [DEBUG]: Processing Karimaszereles
+2023-04-03 01:32:41,010 [DEBUG]: Processing Karimaszereles
+2023-04-03 01:32:41,010 [DEBUG]: Processing Karimaszereles
+2023-04-03 01:32:41,010 [DEBUG]: Processing Karimaszereles
+2023-04-03 01:32:41,874 [DEBUG]: Karimaszereles data loaded
+2023-04-03 01:32:41,874 [DEBUG]: Karimaszereles data loaded
+2023-04-03 01:32:41,874 [DEBUG]: Karimaszereles data loaded
+2023-04-03 01:32:41,874 [DEBUG]: Karimaszereles data loaded
+2023-04-03 01:32:41,875 [DEBUG]: Processing Nyomasproba
+2023-04-03 01:32:41,875 [DEBUG]: Processing Nyomasproba
+2023-04-03 01:32:41,875 [DEBUG]: Processing Nyomasproba
+2023-04-03 01:32:41,875 [DEBUG]: Processing Nyomasproba
+2023-04-03 01:32:42,818 [DEBUG]: Nyomasproba data loaded
+2023-04-03 01:32:42,818 [DEBUG]: Nyomasproba data loaded
+2023-04-03 01:32:42,818 [DEBUG]: Nyomasproba data loaded
+2023-04-03 01:32:42,818 [DEBUG]: Nyomasproba data loaded
