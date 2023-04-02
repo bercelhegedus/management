@@ -13,6 +13,7 @@ from populate_inspections import update_inspections
 
 
 
+
 def interpolate_1d(regressor: pd.Series, target: pd.Series, x: float) -> float:
     # Remove missing values from the regressor and target arrays
     mask = target != ''
@@ -108,13 +109,13 @@ def process_sheets(service_account_file: str, torzssheet_id: str, normasheet_id:
 
     for sheet in sheets:
 
-        logging.info(f'Processing {sheet}')
+        logging.debug(f'Processing {sheet}')
 
         data = process_table(service, torzssheet_id, sheet)
 
         norms = process_table(service, normasheet_id, sheet)
 
-        logging.info(f'{sheet} data loaded')
+        logging.debug(f'{sheet} data loaded')
 
         if not update_blanks:
             ids_to_update = ids_to_update + data[data['Munkaóra'].isna()]['ID'].tolist()

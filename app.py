@@ -5,7 +5,7 @@ from normhours import process_sheets
 import logging
 
 LOG_FILE = 'app.log'
-logging.basicConfig(level=logging.INFO, filename=LOG_FILE, filemode='a',
+logging.basicConfig(level=logging.DEBUG, filename=LOG_FILE, filemode='a',
                     format='%(asctime)s [%(levelname)s]: %(message)s')
 
 app = Flask(__name__)
