@@ -5,7 +5,8 @@ from normhours import process_sheets
 import logging
 
 LOG_FILE = 'app.log'
-
+logging.basicConfig(level=logging.DEBUG, filename=LOG_FILE, filemode='a',
+                    format='%(asctime)s [%(levelname)s]: %(message)s')   
 
 app = Flask(__name__)
 
@@ -47,6 +48,5 @@ def webhook():
     return jsonify({'message': 'Invalid request.'}), 400
 
 if __name__ == '__main__':
-    logging.basicConfig(level=logging.DEBUG, filename=LOG_FILE, filemode='a',
-                        format='%(asctime)s [%(levelname)s]: %(message)s')    
+ 
     app.run(debug=True)
