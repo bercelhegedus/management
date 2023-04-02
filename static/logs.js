@@ -8,7 +8,7 @@ function updateLogs() {
             data.logs.forEach(log => {
                 const logElement = document.createElement('pre');
                 logElement.textContent = log;
-                logsContainer.appendChild(logElement);
+                logsContainer.prepend(logElement);  // Prepend instead of append to reverse the order
             });
         })
         .catch(error => console.error('Error fetching logs:', error));
