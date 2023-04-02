@@ -8,6 +8,8 @@ import traceback
 import pdb    
 import logging
 
+logger = logging.getLogger(__name__)
+
 def update_inspections(csovezetek_ids_to_update=[], force_update=False):
     SERVICE_ACCOUNT_FILE = 'service_account.json'
     TORZSSHEET_ID = '1LtCsUPBqGYpnEZXyKFFoaPaeFfe1CLU-O9wiTMGqJUE'
@@ -27,7 +29,7 @@ def update_inspections(csovezetek_ids_to_update=[], force_update=False):
     cso_cols=['ID', 'Sorszám', 'CsovezetekID', 'IzometrialapID', 'Izometria', 'Lap', 'Külső átmérő', 'Típus', 'Hossz']
     new_rows = pd.DataFrame(columns=cso_cols)
     for _, row in csovezetek.iterrows():
-        logging.debug(f"Processing nyomasproba row: {row['ID']}")
+        logger.debug(f"Processing nyomasproba row: {row['ID']}")
         nyomasproba_max = nyomasproba.loc[nyomasproba['IzometrialapID']==row['IzometrialapID'],'Sorszám'].max()
         if pd.isna(nyomasproba_max):
             nyomasproba_max = 0

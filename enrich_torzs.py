@@ -5,6 +5,9 @@ import pdb
 import os
 import sys
 import traceback
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 def main():

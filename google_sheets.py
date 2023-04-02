@@ -5,6 +5,8 @@ import logging
 from typing import List, Dict, Tuple, Optional, Union
 import xlsxwriter
 
+logger = logging.getLogger(__name__)
+
 def get_service(service_account_file) -> object:
     scopes = ['https://www.googleapis.com/auth/spreadsheets']
     credentials = service_account.Credentials.from_service_account_file(service_account_file, scopes=scopes)
@@ -38,7 +40,7 @@ def upload_table(service, tableid: str, sheetname: str, data: pd.DataFrame):
     data = data.fillna('')
     data_list = data.T.reset_index().values.T.tolist()
     service.spreadsheets().values().update(spreadsheetId=tableid, range=sheetname, valueInputOption='USER_ENTERED', body={'values': data_list}).execute()
-    logging.info(f'Uploaded {sheetname} to {tableid}')
+    logger.info(f'Uploaded {sheetname} to {tableid}')
 
 
 def df_dict_to_excel(df_by_sheet: Dict[str, pd.DataFrame], filename: str):

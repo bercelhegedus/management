@@ -11,7 +11,7 @@ import traceback
 from google_sheets import get_service, process_table, upload_table
 from populate_inspections import update_inspections
 
-
+logger = logging.getLogger(__name__)
 
 
 def interpolate_1d(regressor: pd.Series, target: pd.Series, x: float) -> float:
@@ -36,7 +36,7 @@ def process_hegesztes(data: pd.DataFrame, norms: pd.DataFrame) -> pd.DataFrame:
     norms['D'] = norms['D'].astype(float)
     norms['v'] = norms['v'].astype(float)
     data['Munkaóra'] = data[['Külső átmérő', 'Falvastagság', 'Típus']].apply(lambda x: interpolate_2d(norms['D'], norms['v'], norms[x[2]], x[0], x[1]), axis=1)
-    logging.info(f'Processed {len(data)} rows of hegesztes')
+    logger.info(f'Processed {len(data)} rows of hegesztes')
     return data
 
 
@@ -46,7 +46,7 @@ def process_csotarto(data: pd.DataFrame, norms: pd.DataFrame) -> pd.DataFrame:
     data = data.dropna(subset=['Súly', 'Típus'])
     norms['kg-ig'] = norms['kg-ig'].astype(float)
     data['Munkaóra'] = data[['Súly', 'Típus']].apply(lambda x: x[0] * interpolate_1d(norms['kg-ig'], norms[x[1]], x[0]), axis=1)
-    logging.info(f'Processed {len(data)} rows of csotarto')
+    logger.info(f'Processed {len(data)} rows of csotarto')
     return data
 
 
@@ -59,7 +59,7 @@ def process_csovezetek(data: pd.DataFrame, norms: pd.DataFrame) -> pd.DataFrame:
     norms['D'] = norms['D'].astype(float)
     norms['v'] = norms['v'].astype(float)
     data['Munkaóra'] = data[['Külső átmérő', 'Falvastagság', 'Típus', 'Hossz']].apply(lambda x: x[3] * interpolate_2d(norms['D'], norms['v'], norms[x[2]], x[0], x[1]), axis=1)
-    logging.info(f'Processed {len(data)} rows of csovezetek')
+    logger.info(f'Processed {len(data)} rows of csovezetek')
     return data
 
 
@@ -86,7 +86,7 @@ def process_karimaszerelés(data: pd.DataFrame, norms: pd.DataFrame) -> pd.DataF
     data.loc[(data['Típus'] == 'Összeépített vakperem') & (data['Nyomásfokozat'] > 160), 'Típus'] = 'Összeépített vakperem - PN250-320'
 
     data['Munkaóra'] = data[['DN','Típus']].apply(lambda x: interpolate_1d(norms['DN'], norms[x[1]], x[0]), axis=1)
-    logging.info(f'Processed {len(data)} rows of karimaszerelés')
+    logger.info(f'Processed {len(data)} rows of karimaszerelés')
     return data
 
 def process_nyomasproba(data: pd.DataFrame, norms: pd.DataFrame) -> pd.DataFrame:
@@ -95,7 +95,7 @@ def process_nyomasproba(data: pd.DataFrame, norms: pd.DataFrame) -> pd.DataFrame
     data = data.dropna(subset=['Külső átmérő', 'Típus'])
     norms['D'] = norms['D'].astype(float)
     data['Munkaóra'] = data[['Külső átmérő', 'Típus', 'Hossz']].apply(lambda x: x[2] * interpolate_1d(norms['D'], norms[x[1]], x[0]), axis=1)
-    logging.info(f'Processed {len(data)} rows of nyomasproba')
+    logger.info(f'Processed {len(data)} rows of nyomasproba')
     return data
 
 
@@ -109,13 +109,13 @@ def process_sheets(service_account_file: str, torzssheet_id: str, normasheet_id:
 
     for sheet in sheets:
 
-        logging.debug(f'Processing {sheet}')
+        logger.debug(f'Processing {sheet}')
 
         data = process_table(service, torzssheet_id, sheet)
 
         norms = process_table(service, normasheet_id, sheet)
 
-        logging.debug(f'{sheet} data loaded')
+        logger.debug(f'{sheet} data loaded')
 
         if not update_blanks:
             ids_to_update = ids_to_update + data[data['Munkaóra'].isna()]['ID'].tolist()

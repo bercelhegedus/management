@@ -8,8 +8,9 @@ import sys
 import traceback
 import pdb
 import fpdf
+import logging
 
-
+logger = logging.getLogger(__name__)
 
 def create_summary_table(dataframes, output_file):
     # Combine data from all sheets into a single DataFrame
