@@ -19,13 +19,8 @@ def home():
 def show_logs():
     with open(LOG_FILE, 'r') as log_file:
         logs = log_file.read().splitlines()
-    return render_template('logs.html', logs=logs)
-
-@app.route('/get_logs')
-def get_logs():
-    with open(LOG_FILE, 'r') as log_file:
-        logs = log_file.read().splitlines()
     return jsonify({'logs': logs})
+
 
 
 @app.route('/webhook', methods=['POST'])
