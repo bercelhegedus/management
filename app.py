@@ -39,7 +39,6 @@ def webhook():
 
     if request.method == 'POST':
         data = request.get_json(force=True)
-        logger.info(data)
         entry_ids = data.get('entry_ids', [])
         if isinstance(entry_ids, str):
             entry_ids = [entry_ids]

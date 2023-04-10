@@ -26,11 +26,11 @@ def update_inspections(csovezetek_ids_to_update=[], force_update=False):
     nyomasproba = process_table(service, TORZSSHEET_ID, 'Nyomasproba')
 
     if force_update:
-        nyomasproba = nyomasproba.drop(index=nyomasproba.index)
+        csovezetek_ids_to_update = csovezetek['ID'].unique()
 
     cso_cols=['ID', 'Sorszám', 'CsovezetekID', 'IzometrialapID', 'Izometria', 'Lap', 'Külső átmérő', 'Típus', 'Hossz']
     new_rows = pd.DataFrame(columns=cso_cols)
-    for _, row in csovezetek.iterrows():
+    for _, row in csovezetek.loc[csovezetek['ID'].isin(csovezetek_ids_to_update)].iterrows():
         logger.debug(f"Processing nyomasproba row: {row['ID']}")
         nyomasproba_max = nyomasproba.loc[nyomasproba['IzometrialapID']==row['IzometrialapID'],'Sorszám'].max()
         if pd.isna(nyomasproba_max):
@@ -51,22 +51,14 @@ def update_inspections(csovezetek_ids_to_update=[], force_update=False):
                     row_temp['ID'] = ''.join(random.choices(string.ascii_lowercase + string.digits, k=8))
                     new_rows = pd.concat([new_rows,row_temp[cso_cols].to_frame().T])
 
-
-
+    #overwrite existing rows with drop and concat
+    nyomasproba = nyomasproba[~nyomasproba['CsovezetekID'].isin(csovezetek_ids_to_update)]
     nyomasproba = pd.concat([nyomasproba, new_rows], ignore_index=True)
 
+    # Delete rows with invalid CsovezetekID
     valid_ids = csovezetek['ID'].unique()
     nyomasproba = nyomasproba[nyomasproba['CsovezetekID'].isin(valid_ids)]
 
-    # Find rows to delete
-    rows_to_delete = []
-    for _, row in nyomasproba.iterrows():
-        cso_row = csovezetek[csovezetek['ID'] == row['CsovezetekID']].iloc[0]
-        if cso_row['Szilárdsági nyomáspróba'] != '1' and cso_row['Tömörségi nyomáspróba'] != '1':
-            rows_to_delete.append(row.name)
-
-    # Delete rows
-    nyomasproba = nyomasproba.drop(rows_to_delete)
 
     upload_table(service, TORZSSHEET_ID, 'Nyomasproba', nyomasproba)
 
@@ -75,7 +67,7 @@ def update_inspections(csovezetek_ids_to_update=[], force_update=False):
 
 if __name__ == '__main__':
     try:
-        update_inspections(force_update=True)
+        update_inspections(csovezetek_ids_to_update = ['rmadg1yg'])
     except KeyboardInterrupt:
         print('Interrupted')
         try:
