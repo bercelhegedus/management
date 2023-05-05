@@ -1,0 +1,55 @@
+2023-04-13 23:51:39,582 [INFO]: file_cache is only supported with oauth2client<4.0.0
+2023-04-13 23:51:39,595 [DEBUG]: Processing Csotarto
+2023-04-13 23:51:39,828 [DEBUG]: URL being requested: GET https://sheets.googleapis.com/v4/spreadsheets/1LtCsUPBqGYpnEZXyKFFoaPaeFfe1CLU-O9wiTMGqJUE/values/Csotarto?alt=json
+2023-04-13 23:51:39,857 [DEBUG]: Making request: POST https://oauth2.googleapis.com/token
+2023-04-13 23:51:41,006 [DEBUG]: URL being requested: GET https://sheets.googleapis.com/v4/spreadsheets/1Cd1PIhYJUQJd8Dr7XfcL31nd_ukNjAL-yqYGTFOVBh4/values/Csotarto?alt=json
+2023-04-13 23:51:41,709 [DEBUG]: Csotarto data loaded
+2023-04-13 23:51:43,744 [INFO]: Processed 5904 rows of csotarto
+2023-04-13 23:51:43,816 [DEBUG]: URL being requested: PUT https://sheets.googleapis.com/v4/spreadsheets/1LtCsUPBqGYpnEZXyKFFoaPaeFfe1CLU-O9wiTMGqJUE/values/Csotarto?valueInputOption=USER_ENTERED&alt=json
+2023-04-13 23:51:45,489 [INFO]: Uploaded Csotarto to 1LtCsUPBqGYpnEZXyKFFoaPaeFfe1CLU-O9wiTMGqJUE
+2023-04-13 23:51:45,491 [DEBUG]: Processing Hegesztes
+2023-04-13 23:51:45,518 [DEBUG]: URL being requested: GET https://sheets.googleapis.com/v4/spreadsheets/1LtCsUPBqGYpnEZXyKFFoaPaeFfe1CLU-O9wiTMGqJUE/values/Hegesztes?alt=json
+2023-04-13 23:51:46,281 [DEBUG]: URL being requested: GET https://sheets.googleapis.com/v4/spreadsheets/1Cd1PIhYJUQJd8Dr7XfcL31nd_ukNjAL-yqYGTFOVBh4/values/Hegesztes?alt=json
+2023-04-13 23:51:46,631 [DEBUG]: Hegesztes data loaded
+2023-04-13 23:55:59,312 [INFO]: file_cache is only supported with oauth2client<4.0.0
+2023-04-13 23:55:59,316 [DEBUG]: Processing Csotarto
+2023-04-13 23:55:59,471 [DEBUG]: URL being requested: GET https://sheets.googleapis.com/v4/spreadsheets/1LtCsUPBqGYpnEZXyKFFoaPaeFfe1CLU-O9wiTMGqJUE/values/Csotarto?alt=json
+2023-04-13 23:55:59,498 [DEBUG]: Making request: POST https://oauth2.googleapis.com/token
+2023-04-13 23:56:00,337 [DEBUG]: URL being requested: GET https://sheets.googleapis.com/v4/spreadsheets/1Cd1PIhYJUQJd8Dr7XfcL31nd_ukNjAL-yqYGTFOVBh4/values/Csotarto?alt=json
+2023-04-13 23:56:00,742 [DEBUG]: Csotarto data loaded
+2023-04-13 23:56:02,812 [INFO]: Processed 5904 rows of csotarto
+2023-04-13 23:56:02,884 [DEBUG]: URL being requested: PUT https://sheets.googleapis.com/v4/spreadsheets/1LtCsUPBqGYpnEZXyKFFoaPaeFfe1CLU-O9wiTMGqJUE/values/Csotarto?valueInputOption=USER_ENTERED&alt=json
+2023-04-13 23:56:04,563 [INFO]: Uploaded Csotarto to 1LtCsUPBqGYpnEZXyKFFoaPaeFfe1CLU-O9wiTMGqJUE
+2023-04-13 23:56:04,564 [DEBUG]: Processing Hegesztes
+2023-04-13 23:56:04,594 [DEBUG]: URL being requested: GET https://sheets.googleapis.com/v4/spreadsheets/1LtCsUPBqGYpnEZXyKFFoaPaeFfe1CLU-O9wiTMGqJUE/values/Hegesztes?alt=json
+2023-04-13 23:56:05,293 [DEBUG]: URL being requested: GET https://sheets.googleapis.com/v4/spreadsheets/1Cd1PIhYJUQJd8Dr7XfcL31nd_ukNjAL-yqYGTFOVBh4/values/Hegesztes?alt=json
+2023-04-13 23:56:05,678 [DEBUG]: Hegesztes data loaded
+2023-04-13 23:59:07,838 [INFO]: Processed 10381 rows of hegesztes
+2023-04-13 23:59:14,907 [DEBUG]: URL being requested: PUT https://sheets.googleapis.com/v4/spreadsheets/1LtCsUPBqGYpnEZXyKFFoaPaeFfe1CLU-O9wiTMGqJUE/values/Hegesztes?valueInputOption=USER_ENTERED&alt=json
+2023-04-13 23:59:17,349 [INFO]: Uploaded Hegesztes to 1LtCsUPBqGYpnEZXyKFFoaPaeFfe1CLU-O9wiTMGqJUE
+2023-04-13 23:59:17,353 [DEBUG]: Processing Csovezetek
+2023-04-13 23:59:17,379 [DEBUG]: URL being requested: GET https://sheets.googleapis.com/v4/spreadsheets/1LtCsUPBqGYpnEZXyKFFoaPaeFfe1CLU-O9wiTMGqJUE/values/Csovezetek?alt=json
+2023-04-13 23:59:17,852 [DEBUG]: URL being requested: GET https://sheets.googleapis.com/v4/spreadsheets/1Cd1PIhYJUQJd8Dr7XfcL31nd_ukNjAL-yqYGTFOVBh4/values/Csovezetek?alt=json
+2023-04-13 23:59:18,299 [DEBUG]: Csovezetek data loaded
+2023-04-13 23:59:18,303 [DEBUG]: Processing Karimaszereles
+2023-04-13 23:59:18,340 [DEBUG]: URL being requested: GET https://sheets.googleapis.com/v4/spreadsheets/1LtCsUPBqGYpnEZXyKFFoaPaeFfe1CLU-O9wiTMGqJUE/values/Karimaszereles?alt=json
+2023-04-13 23:59:18,743 [DEBUG]: URL being requested: GET https://sheets.googleapis.com/v4/spreadsheets/1Cd1PIhYJUQJd8Dr7XfcL31nd_ukNjAL-yqYGTFOVBh4/values/Karimaszereles?alt=json
+2023-04-13 23:59:19,052 [DEBUG]: Karimaszereles data loaded
+2023-04-13 23:59:19,055 [DEBUG]: Processing Nyomasproba
+2023-04-13 23:59:19,083 [DEBUG]: URL being requested: GET https://sheets.googleapis.com/v4/spreadsheets/1LtCsUPBqGYpnEZXyKFFoaPaeFfe1CLU-O9wiTMGqJUE/values/Nyomasproba?alt=json
+2023-04-13 23:59:19,529 [DEBUG]: URL being requested: GET https://sheets.googleapis.com/v4/spreadsheets/1Cd1PIhYJUQJd8Dr7XfcL31nd_ukNjAL-yqYGTFOVBh4/values/Nyomasproba?alt=json
+2023-04-13 23:59:19,845 [DEBUG]: Nyomasproba data loaded
+2023-04-13 23:59:20,512 [INFO]: Processed 2130 rows of nyomasproba
+2023-04-13 23:59:21,205 [DEBUG]: URL being requested: PUT https://sheets.googleapis.com/v4/spreadsheets/1LtCsUPBqGYpnEZXyKFFoaPaeFfe1CLU-O9wiTMGqJUE/values/Nyomasproba?valueInputOption=USER_ENTERED&alt=json
+2023-04-13 23:59:22,270 [INFO]: Uploaded Nyomasproba to 1LtCsUPBqGYpnEZXyKFFoaPaeFfe1CLU-O9wiTMGqJUE
+2023-04-14 00:19:00,604 [INFO]: file_cache is only supported with oauth2client<4.0.0
+2023-04-14 00:19:00,770 [DEBUG]: URL being requested: GET https://sheets.googleapis.com/v4/spreadsheets/1LtCsUPBqGYpnEZXyKFFoaPaeFfe1CLU-O9wiTMGqJUE?alt=json
+2023-04-14 00:19:00,799 [DEBUG]: Making request: POST https://oauth2.googleapis.com/token
+2023-04-14 00:19:01,541 [DEBUG]: URL being requested: GET https://sheets.googleapis.com/v4/spreadsheets/1LtCsUPBqGYpnEZXyKFFoaPaeFfe1CLU-O9wiTMGqJUE/values/Izometria?alt=json
+2023-04-14 00:19:01,904 [DEBUG]: URL being requested: GET https://sheets.googleapis.com/v4/spreadsheets/1LtCsUPBqGYpnEZXyKFFoaPaeFfe1CLU-O9wiTMGqJUE/values/Izometrialap?alt=json
+2023-04-14 00:19:02,245 [DEBUG]: URL being requested: GET https://sheets.googleapis.com/v4/spreadsheets/1LtCsUPBqGYpnEZXyKFFoaPaeFfe1CLU-O9wiTMGqJUE/values/Alv%C3%A1llalkoz%C3%B3k?alt=json
+2023-04-14 00:19:02,587 [DEBUG]: URL being requested: GET https://sheets.googleapis.com/v4/spreadsheets/1LtCsUPBqGYpnEZXyKFFoaPaeFfe1CLU-O9wiTMGqJUE/values/Csotarto?alt=json
+2023-04-14 00:19:03,141 [DEBUG]: URL being requested: GET https://sheets.googleapis.com/v4/spreadsheets/1LtCsUPBqGYpnEZXyKFFoaPaeFfe1CLU-O9wiTMGqJUE/values/Hegesztes?alt=json
+2023-04-14 00:19:03,914 [DEBUG]: URL being requested: GET https://sheets.googleapis.com/v4/spreadsheets/1LtCsUPBqGYpnEZXyKFFoaPaeFfe1CLU-O9wiTMGqJUE/values/Csovezetek?alt=json
+2023-04-14 00:19:04,381 [DEBUG]: URL being requested: GET https://sheets.googleapis.com/v4/spreadsheets/1LtCsUPBqGYpnEZXyKFFoaPaeFfe1CLU-O9wiTMGqJUE/values/Karimaszereles?alt=json
+2023-04-14 00:19:04,772 [DEBUG]: URL being requested: GET https://sheets.googleapis.com/v4/spreadsheets/1LtCsUPBqGYpnEZXyKFFoaPaeFfe1CLU-O9wiTMGqJUE/values/Nyomasproba?alt=json

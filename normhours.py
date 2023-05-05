@@ -102,7 +102,7 @@ def process_nyomasproba(data: pd.DataFrame, norms: pd.DataFrame) -> pd.DataFrame
 
 
 
-def process_sheets(service_account_file: str, torzssheet_id: str, normasheet_id: str,update_blanks = False, ids_to_update: List[str] = [], sheets: List[str] = ['Csotarto', 'Hegesztes', 'Csovezetek', 'Karimaszereles', 'Nyomasproba']) -> None:
+def process_sheets(service_account_file: str, torzssheet_id: str, normasheet_id: str,update_blanks = True, ids_to_update: List[str] = [], sheets: List[str] = ['Csotarto', 'Hegesztes', 'Csovezetek', 'Karimaszereles', 'Nyomasproba']) -> None:
 
     service = get_service(service_account_file)
 
@@ -119,7 +119,7 @@ def process_sheets(service_account_file: str, torzssheet_id: str, normasheet_id:
 
         logger.debug(f'{sheet} data loaded')
 
-        if not update_blanks:
+        if update_blanks:
             ids_to_update = ids_to_update + data[data['Munkaóra'].isna()]['ID'].tolist()
 
         if ids_to_update:
