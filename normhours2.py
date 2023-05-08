@@ -92,16 +92,16 @@ def process_karimaszerelés(data: Table, norms: Table) -> Table:
     norms.rename_columns({'DN': 'DN'})
     
     
+    if 'Nyomásfokozat' in data.data.columns:
+        norms.data['Összeépített vakperem - PN10-40'] = pd.to_numeric(norms.data['Összeépített vakperem'], errors='coerce') + pd.to_numeric(norms.data['PN10-40'], errors='coerce')
+        norms.data['Összeépített vakperem - PN64-160'] = pd.to_numeric(norms.data['Összeépített vakperem'], errors='coerce') + pd.to_numeric(norms.data['PN64-160'], errors='coerce')
+        norms.data['Összeépített vakperem - PN250-320'] = pd.to_numeric(norms.data['Összeépített vakperem'], errors='coerce') + pd.to_numeric(norms.data['PN250-320'], errors='coerce')
 
-    norms.data['Összeépített vakperem - PN10-40'] = pd.to_numeric(norms.data['Összeépített vakperem'], errors='coerce') + pd.to_numeric(norms.data['PN10-40'], errors='coerce')
-    norms.data['Összeépített vakperem - PN64-160'] = pd.to_numeric(norms.data['Összeépített vakperem'], errors='coerce') + pd.to_numeric(norms.data['PN64-160'], errors='coerce')
-    norms.data['Összeépített vakperem - PN250-320'] = pd.to_numeric(norms.data['Összeépített vakperem'], errors='coerce') + pd.to_numeric(norms.data['PN250-320'], errors='coerce')
-
-    
-    data.data.loc[(data.data['Típus'] == 'Összeépített vakperem') & (data.data['Nyomásfokozat'] <= 40), 'Típus'] = 'Összeépített vakperem - PN10-40'
-    data.data.loc[(data.data['Típus'] == 'Összeépített vakperem') & (data.data['Nyomásfokozat'] > 40) & (data.data['Nyomásfokozat'] <= 160), 'Típus'] = 'Összeépített vakperem - PN64-160'
-    data.data.loc[(data.data['Típus'] == 'Összeépített vakperem') & (data.data['Nyomásfokozat'] > 160), 'Típus'] = 'Összeépített vakperem - PN250-320'
-    
+        
+        data.data.loc[(data.data['Típus'] == 'Összeépített vakperem') & (data.data['Nyomásfokozat'] <= 40), 'Típus'] = 'Összeépített vakperem - PN10-40'
+        data.data.loc[(data.data['Típus'] == 'Összeépített vakperem') & (data.data['Nyomásfokozat'] > 40) & (data.data['Nyomásfokozat'] <= 160), 'Típus'] = 'Összeépített vakperem - PN64-160'
+        data.data.loc[(data.data['Típus'] == 'Összeépített vakperem') & (data.data['Nyomásfokozat'] > 160), 'Típus'] = 'Összeépített vakperem - PN250-320'
+        
     action = Interpolate1DAction(regressor_col='DN', norms=norms, data_interpolated_col='Munkaóra', data_type_col='Típus')
     data = action.action(data)
     return data
@@ -117,7 +117,7 @@ def process_nyomasproba(data: Table, norms: Table) -> Table:
 
 if __name__ == '__main__':
     try:
-        process_excel('torzs.xlsx', 'torzs_out.xlsx')
+        process_excel('fail.xlsx', 'torzs_out.xlsx')
     except:
         traceback.print_exc()
         pdb.post_mortem()
