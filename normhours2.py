@@ -121,7 +121,7 @@ def process_nyomasproba(data: Table, norms: Table) -> Table:
 
 if __name__ == '__main__':
     try:
-        process_excel('fail.xlsx', 'torzs_out.xlsx')
+        process_excel('01.xlsx', 'torzs_out.xlsx')
     except:
         traceback.print_exc()
         pdb.post_mortem()
