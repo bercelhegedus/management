@@ -2,6 +2,7 @@ from flask import Flask, render_template, request, send_file, jsonify
 import os
 import logging
 from normhours2 import process_excel, process_spreadsheet
+import tempfile
 
 app = Flask(__name__)
 
@@ -9,11 +10,11 @@ app = Flask(__name__)
 def index():
     return render_template('index.html')
 
+
 @app.route('/process_excel', methods=['POST'])
 def process_excel_route():
     input_file = request.files['input_file']
-    downloads_folder = os.path.expanduser("~/Downloads")
-    input_file_path = os.path.join(downloads_folder, input_file.filename)
+    input_file_path = tempfile.NamedTemporaryFile(delete=False).name
     input_file.save(input_file_path)
 
     try:
@@ -24,7 +25,8 @@ def process_excel_route():
         return jsonify({'message': f'Error processing Excel file: {str(e)}'}), 500
 
     output_file_path = 'output.xlsx'
-    return send_file(output_file_path, as_attachment=True, attachment_filename='output.xlsx')
+    return send_file(output_file_path, as_attachment=True, download_name='output.xlsx')
+
 
 
 @app.route('/process_spreadsheet', methods=['POST'])
