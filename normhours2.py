@@ -12,26 +12,30 @@ LOG_FILE = 'app.log'
 
 def process_all(data_workbook, norms_workbook):
 
+    if 'Csotarto' in data_workbook.tables.keys():
+        logging.info("Processing csotarto...")
+        csotarto = process_csotarto(data_workbook.get_table('Csotarto'), norms_workbook.get_table('Csotarto'))
+        data_workbook.add_table('Csotarto', csotarto)
 
-    logging.info("Processing csotarto...")
-    csotarto = process_csotarto(data_workbook.get_table('Csotarto'), norms_workbook.get_table('Csotarto'))
-    data_workbook.add_table('Csotarto', csotarto)
+    if 'Hegesztes' in data_workbook.tables.keys():
+        logging.info("Processing hegesztes...")
+        hegesztes = process_hegesztes(data_workbook.get_table('Hegesztes'), norms_workbook.get_table('Hegesztes'))
+        data_workbook.add_table('Hegesztes', hegesztes)
 
-    logging.info("Processing hegesztes...")
-    hegesztes = process_hegesztes(data_workbook.get_table('Hegesztes'), norms_workbook.get_table('Hegesztes'))
-    data_workbook.add_table('Hegesztes', hegesztes)
+    if 'Csovezetek' in data_workbook.tables.keys():
+        logging.info("Processing csovezetek...")
+        csovezetek = process_csovezetek(data_workbook.get_table('Csovezetek'), norms_workbook.get_table('Csovezetek'))
+        data_workbook.add_table('Csovezetek', csovezetek)
 
-    logging.info("Processing csovezetek...")
-    csovezetek = process_csovezetek(data_workbook.get_table('Csovezetek'), norms_workbook.get_table('Csovezetek'))
-    data_workbook.add_table('Csovezetek', csovezetek)
+    if 'Karimaszereles' in data_workbook.tables.keys():
+        logging.info("Processing karimaszerelés...")
+        karimaszereles = process_karimaszerelés(data_workbook.get_table('Karimaszereles'), norms_workbook.get_table('Karimaszereles'))
+        data_workbook.add_table('Karimaszereles', karimaszereles)
 
-    logging.info("Processing karimaszerelés...")
-    karimaszereles = process_karimaszerelés(data_workbook.get_table('Karimaszereles'), norms_workbook.get_table('Karimaszereles'))
-    data_workbook.add_table('Karimaszereles', karimaszereles)
-
-    logging.info("Processing nyomasproba...")
-    nyomasproba = process_nyomasproba(data_workbook.get_table('Nyomasproba'), norms_workbook.get_table('Nyomasproba'))
-    data_workbook.add_table('Nyomasproba', nyomasproba)
+    if 'Nyomasproba' in data_workbook.tables.keys():
+        logging.info("Processing nyomasproba...")
+        nyomasproba = process_nyomasproba(data_workbook.get_table('Nyomasproba'), norms_workbook.get_table('Nyomasproba'))
+        data_workbook.add_table('Nyomasproba', nyomasproba)
 
     return data_workbook
     
