@@ -1,67 +1,39 @@
-from flask import Flask, request, jsonify, render_template
-import json
-import threading
-from normhours import process_sheets
+from flask import Flask, render_template, request, send_file
+import os
+from normhours2 import process_excel, process_spreadsheet
+from flask import jsonify
 import logging
-from logger import init_logger
-
-LOG_FILE = 'app.log'
-logger = init_logger(LOG_FILE, level=logging.DEBUG)
 
 app = Flask(__name__)
 
-@app.route('/')
-def home():
-    logger.info(f"Request: {request.method} {request.path}")
-    return "Welcome to the Flask App! This is a webhook application for processing Google Sheets."
+@app.route('/', methods=['GET', 'POST'])
+def index():
+    return render_template('index.html')
 
+@app.route('/process_excel', methods=['POST'])
+def process_excel_route():
+    input_file = request.files['input_file']
+    downloads_folder = os.path.expanduser("~\Downloads")
+    input_file_path = os.path.join(downloads_folder, input_file.filename)
+    input_file.save(input_file_path)
 
-@app.route('/logs')
-def logs():
     try:
-        with open(LOG_FILE, 'r') as log_file:
-            logs = log_file.readlines()
-            logs.reverse()  # Reverse the order of the logs
-            logs_html = "<br>".join(logs)  # Convert logs to a single HTML string
-        return logs_html
+        process_excel(input_file_path, 'output.xlsx')
     except Exception as e:
-        logger.error(f"Error while reading logs: {str(e)}")
-        return f"Error while reading logs: {str(e)}", 500
+        # Log the error and show a message to the user
+        logging.error(f"Error processing Excel file: {str(e)}")
+        return jsonify({'message': f'Error processing Excel file: {str(e)}'}), 500
+
+    output_file_path = 'output.xlsx'
+    return send_file(output_file_path, as_attachment=True, download_name='output.xlsx')
 
 
-@app.route('/webhook', methods=['POST'])
-def webhook():
-    logger.info(f"Request: {request.method} {request.path} {request.data}")
+@app.route('/process_spreadsheet', methods=['POST'])
+def process_spreadsheet_route():
+    # Call your process_spreadsheet function here
+    process_spreadsheet()
 
-    SERVICE_ACCOUNT_FILE = 'service_account.json'
-    TORZSSHEET_ID = '1LtCsUPBqGYpnEZXyKFFoaPaeFfe1CLU-O9wiTMGqJUE'
-    NORMASHEET_ID = '1Cd1PIhYJUQJd8Dr7XfcL31nd_ukNjAL-yqYGTFOVBh4'
-
-    if request.method == 'POST':
-        data = request.get_json(force=True)
-        entry_ids = data.get('entry_ids', [])
-        if isinstance(entry_ids, str):
-            entry_ids = [entry_ids]
-        sheets = data.get('sheets', ['Csotarto', 'Hegesztes', 'Csovezetek', 'Karimaszereles'])
-
-        try:
-            thread = threading.Thread(target=process_sheets,
-                            kwargs={
-                                'service_account_file': SERVICE_ACCOUNT_FILE,
-                                'torzssheet_id': TORZSSHEET_ID,
-                                'normasheet_id': NORMASHEET_ID,
-                                'ids_to_update': entry_ids,
-                                'sheets': sheets,
-                                'update_blanks': True
-                            })
-            thread.start()
-            logger.info("Update started")
-            return jsonify({'message': 'Update started.'}), 200
-        except Exception as e:
-            return jsonify({'message': f'Error: {str(e)}'}), 500
-
-    return jsonify({'message': 'Invalid request.'}), 400
+    return jsonify({'message': 'Google Sheets updated.'}), 200
 
 if __name__ == '__main__':
- 
     app.run(debug=True)
