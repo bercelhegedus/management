@@ -1,0 +1,87 @@
+
+/* Set the font and background color for the entire page */
+body {
+font-family: Arial, sans-serif;
+background-color: #f5f5f5;
+margin: 0;
+padding: 0;
+}
+
+/* Style the container */
+.container {
+display: flex;
+flex-direction: column;
+align-items: center;
+max-width: 800px;
+margin: 0 auto;
+padding: 30px;
+background-color: #ffffff;
+box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+text-align: center;
+}
+
+/* Style the form */
+form {
+display: flex;
+flex-direction: column;
+align-items: center;
+}
+
+/* Style the form inputs and labels */
+input[type="file"] {
+font-size: 16px;
+padding: 10px;
+margin-bottom: 15px;
+border-radius: 5px;
+}
+
+/* Style the submit button */
+button {
+font-size: 16px;
+padding: 10px;
+background-color: #03701a;
+color: #ffffff;
+cursor: pointer;
+border: none;
+border-radius: 5px;
+margin: 0 auto;
+transition: background-color 0.3s;
+margin-bottom: 20px;
+width: 250px;
+}
+
+button:hover {
+background-color: #0baa48;
+}
+
+/* Style the spinner */
+#spinner {
+display: none;
+width: 80px;
+height: 80px;
+border: 8px solid #f3f3f3;
+border-top: 8px solid #03701a;
+border-radius: 50%;
+animation: spin 2s linear infinite;
+}
+
+/* Spinner container */
+.spinner-container {
+display: flex;
+width: 100%;
+justify-content: center;
+}
+
+/* Spinner animation */
+@keyframes spin {
+0% { transform: rotate(0deg); }
+100% { transform: rotate(360deg); }
+}
+
+/* Style the headings */
+h1 {
+font-size: 24px;
+color: #333;
+margin-top: 30px;
+margin-bottom: 20px;
+}
