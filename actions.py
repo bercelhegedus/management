@@ -103,3 +103,67 @@ class Interpolate2DAction(Action):
         interpolated_table = self.interpolate(table)
         table.update(interpolated_table)
         return table
+
+class MultiplierAction(Action):
+
+    def __init__(self, multiplier_table: 'Table', category_col: str, multiplier_col: str, target_col: str):
+        self.category_col = category_col
+        self.multiplier_col = multiplier_col
+        self.target_col = target_col
+        self.multiplier_table = multiplier_table.data
+
+    def multiply(self, table: 'Table') -> 'Table':
+        data = table.data.copy()
+        multiplier_data = self.multiplier_table.copy()
+
+        multiplier_data[self.multiplier_col] = pd.to_numeric(multiplier_data[self.multiplier_col], errors='coerce')
+
+        merged = pd.merge(data, multiplier_data, how='left', left_on=self.category_col, right_on=self.category_col)
+
+        merged[self.target_col] *= merged[self.multiplier_col]
+
+        merged = merged.drop(columns=[self.multiplier_col])
+
+        return Table(merged)
+
+    def action(self, table: 'Table') -> 'Table':
+        multiplied_table = self.multiply(table)
+        table.update(multiplied_table)
+        return table
+
+
+class NearestLowerMultiplierAction(Action):
+
+    def __init__(self, multiplier_table: 'Table', category_col: str, multiplier_col: str, target_col: str):
+        self.category_col = category_col
+        self.multiplier_col = multiplier_col
+        self.target_col = target_col
+        self.multiplier_table = multiplier_table.data
+
+    def multiply(self, table: 'Table') -> 'Table':
+        data = table.data.copy()
+        multiplier_data = self.multiplier_table.copy()
+
+        # Make sure the Multiplier and Category columns are numeric
+        multiplier_data[self.multiplier_col] = pd.to_numeric(multiplier_data[self.multiplier_col], errors='coerce')
+        multiplier_data[self.category_col] = pd.to_numeric(multiplier_data[self.category_col], errors='coerce')
+        data[self.category_col] = pd.to_numeric(data[self.category_col], errors='coerce')
+
+        # Sort dataframes
+        data = data.sort_values(by=self.category_col)
+        multiplier_data = multiplier_data.sort_values(by=self.category_col)
+
+        # Perform asof merge
+        merged = pd.merge_asof(data, multiplier_data, on=self.category_col)
+
+        # Multiply the target column with the Multiplier
+        merged[self.target_col] *= merged[self.multiplier_col]
+
+        merged = merged.drop(columns=[self.multiplier_col])
+
+        return Table(merged)
+
+    def action(self, table: 'Table') -> 'Table':
+        multiplied_table = self.multiply(table)
+        table.update(multiplied_table)
+        return table

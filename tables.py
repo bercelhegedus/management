@@ -34,6 +34,7 @@ class Table:
         self.data.update(other.data)
         self.data.drop([col for col in self.data.columns if col.endswith('_y')], axis=1, inplace=True)
 
+
     def rename_columns(self, columns: dict) -> None:
         self.data.rename(columns=columns, inplace=True)
     
@@ -92,9 +93,16 @@ class Workbook:
             for table_name, table in self.tables.items():
                 table.data.to_excel(writer, sheet_name=table_name)
 
+
     def write_to_google_sheets(self, service_account_file: str, file_name: str) -> str:
-        sheets_service = _get_service(service_account_file)
-        drive_service = build('drive', 'v3', credentials=sheets_service._http._auth)
+        # Build credentials with both Sheets and Drive API scopes
+
+        scopes = ['https://www.googleapis.com/auth/spreadsheets', 'https://www.googleapis.com/auth/drive']
+        credentials = service_account.Credentials.from_service_account_file(service_account_file, scopes=scopes)
+        
+        # Create Sheets and Drive services using the same credentials
+        sheets_service = build('sheets', 'v4', credentials=credentials)
+        drive_service = build('drive', 'v3', credentials=credentials)
 
         # Create a new Google Sheets document
         file_metadata = {
@@ -111,6 +119,7 @@ class Workbook:
         return spreadsheet_id
 
 
+
 def _write_table_to_google_sheets(service, spreadsheet_id: str, sheet_name: str, data: pd.DataFrame) -> None:
     # Create a new sheet in the Google Sheets document
     sheet_properties = {
@@ -120,13 +129,15 @@ def _write_table_to_google_sheets(service, spreadsheet_id: str, sheet_name: str,
     }
     service.spreadsheets().batchUpdate(spreadsheetId=spreadsheet_id, body={'requests': [{'addSheet': sheet_properties}]}).execute()
 
+    # Replace NaN values with an empty string
+    data = data.fillna("")
+
     # Write data to the new sheet
     data_list = [list(data.columns)] + data.values.tolist()
     body = {
         'values': data_list,
     }
     service.spreadsheets().values().update(spreadsheetId=spreadsheet_id, range=sheet_name, valueInputOption='RAW', body=body).execute()
-
     
 
 def _get_service(service_account_file) -> object:
@@ -141,6 +152,9 @@ def _process_table(service, tableid: str, sheetname: str) -> pd.DataFrame:
     max_cols = max(len(row) for row in data)
     data = [row + [None] * (max_cols - len(row)) for row in data]
     data = pd.DataFrame(data[1:], columns=data[0])
+    for col in data.columns:
+        data[col] = pd.to_numeric(data[col], errors='ignore')
+
     return data
 
 
