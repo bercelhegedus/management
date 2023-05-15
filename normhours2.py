@@ -38,31 +38,31 @@ def process_all(data_workbook, norms_workbook, mod_workbook):
     if 'Csotarto' in data_workbook.tables.keys():
         logging.info("Processing csotarto...")
         csotarto = process_csotarto(data_workbook.get_table('Csotarto'), norms_workbook.get_table('Csotarto'))
-        csotarto = apply_magassag_modifier(csotarto, mod_workbook.get_table('Magassag'), izometria=data_workbook.get_table('Izometria'))
+        csotarto = apply_magassag_modifier(csotarto, mod_workbook.get_table('Magassag'), izometria=data_workbook.get_table('Izometrialap'))
         data_workbook.add_table('Csotarto', csotarto)
 
     if 'Hegesztes' in data_workbook.tables.keys():
         logging.info("Processing hegesztes...")
-        hegesztes = process_hegesztes(data_workbook.get_table('Hegesztes'), norms_workbook.get_table('Hegesztes'), mod_workbook.get_table('Anyag'), izometria=data_workbook.get_table('Izometria'))
-        hegesztes = apply_magassag_modifier(hegesztes, mod_workbook.get_table('Magassag'), izometria=data_workbook.get_table('Izometria'))
+        hegesztes = process_hegesztes(data_workbook.get_table('Hegesztes'), norms_workbook.get_table('Hegesztes'), mod_workbook.get_table('Anyag'), izometria=data_workbook.get_table('Izometrialap'))
+        hegesztes = apply_magassag_modifier(hegesztes, mod_workbook.get_table('Magassag'), izometria=data_workbook.get_table('Izometrialap'))
         data_workbook.add_table('Hegesztes', hegesztes)
 
     if 'Csovezetek' in data_workbook.tables.keys():
         logging.info("Processing csovezetek...")
         csovezetek = process_csovezetek(data_workbook.get_table('Csovezetek'), norms_workbook.get_table('Csovezetek'))
-        csovezetek = apply_magassag_modifier(csovezetek, mod_workbook.get_table('Magassag'), izometria=data_workbook.get_table('Izometria'))
+        csovezetek = apply_magassag_modifier(csovezetek, mod_workbook.get_table('Magassag'), izometria=data_workbook.get_table('Izometrialap'))
         data_workbook.add_table('Csovezetek', csovezetek)
 
     if 'Karimaszereles' in data_workbook.tables.keys():
         logging.info("Processing karimaszerelés...")
         karimaszereles = process_karimaszerelés(data_workbook.get_table('Karimaszereles'), norms_workbook.get_table('Karimaszereles'))
-        karimaszereles = apply_magassag_modifier(karimaszereles, mod_workbook.get_table('Magassag'), izometria=data_workbook.get_table('Izometria'))
+        karimaszereles = apply_magassag_modifier(karimaszereles, mod_workbook.get_table('Magassag'), izometria=data_workbook.get_table('Izometrialap'))
         data_workbook.add_table('Karimaszereles', karimaszereles)
 
     if 'Nyomasproba' in data_workbook.tables.keys():
         logging.info("Processing nyomasproba...")
         nyomasproba = process_nyomasproba(data_workbook.get_table('Nyomasproba'), norms_workbook.get_table('Nyomasproba'))
-        nyomasproba = apply_magassag_modifier(nyomasproba, mod_workbook.get_table('Magassag'), izometria=data_workbook.get_table('Izometria'))
+        nyomasproba = apply_magassag_modifier(nyomasproba, mod_workbook.get_table('Magassag'), izometria=data_workbook.get_table('Izometrialap'))
         data_workbook.add_table('Nyomasproba', nyomasproba)
 
     return data_workbook
