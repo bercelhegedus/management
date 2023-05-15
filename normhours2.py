@@ -90,11 +90,13 @@ def process_spreadsheet():
     SERVICE_ACCOUNT_FILE = 'service_account.json'
     TORZSSHEET_ID = '1LtCsUPBqGYpnEZXyKFFoaPaeFfe1CLU-O9wiTMGqJUE'
     NORMASHEET_ID = '1Cd1PIhYJUQJd8Dr7XfcL31nd_ukNjAL-yqYGTFOVBh4'
+    MODIFIER_ID = '1IYJj1j9i0c_8W4PR_tVr7sf98cp9mznpCpSp-0ITbnI'
 
     data_workbook = Workbook.read_google_sheets_to_workbook(SERVICE_ACCOUNT_FILE, TORZSSHEET_ID)
     norms_workbook = Workbook.read_google_sheets_to_workbook(SERVICE_ACCOUNT_FILE, NORMASHEET_ID)
+    modifier_workbook = Workbook.read_google_sheets_to_workbook(SERVICE_ACCOUNT_FILE, MODIFIER_ID)
 
-    process_all(data_workbook, norms_workbook)
+    process_all(data_workbook, norms_workbook, modifier_workbook)
 
     logging.info(f"Writing output to {TORZSSHEET_ID}...")
     data_workbook.write_to_google_sheets(SERVICE_ACCOUNT_FILE, TORZSSHEET_ID)
