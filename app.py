@@ -23,10 +23,12 @@ def get_output_bytes(input_file):
 
     SERVICE_ACCOUNT_FILE = 'service_account.json'
     NORMASHEET_ID = '1Cd1PIhYJUQJd8Dr7XfcL31nd_ukNjAL-yqYGTFOVBh4'
+    MODIFIER_ID = '1IYJj1j9i0c_8W4PR_tVr7sf98cp9mznpCpSp-0ITbnI'
 
     norms_workbook = Workbook.read_google_sheets_to_workbook(SERVICE_ACCOUNT_FILE, NORMASHEET_ID)
+    modifier_workbook = Workbook.read_google_sheets_to_workbook(SERVICE_ACCOUNT_FILE, MODIFIER_ID)
 
-    process_all(data_workbook, norms_workbook)
+    process_all(data_workbook, norms_workbook, modifier_workbook)
 
     output = io.BytesIO()
     data_workbook.write_to_excel(output)
