@@ -21,8 +21,8 @@ def apply_magassag_modifier(data: Table, magassag_modifier: Table, izometria: Ta
             return data 
         if not 'Magassag' in izometria.data.columns:
             return data
-        
         data.data = pd.merge(data.data, izometria.data[['IzometrialapID','Magassag']], on='IzometrialapID', how='left')
+
     magassag_modifier.rename_columns({'Magassagtol': 'Magassag'})
     nearest_lower_multiplier_action = NearestLowerMultiplierAction(magassag_modifier,'Magassag', 'Szorzo', 'Munkaóra')
     data = nearest_lower_multiplier_action.action(data)
@@ -118,7 +118,7 @@ def process_hegesztes(data: Table, norms: Table,anyag_modifier: Table, izometria
         if not 'Anyagminoseg' in izometria.data.columns:
             return data
         
-        data = pd.merge(data, izometria[['IzometrialapID']], on='IzometrialapID', how='left')
+        data.data = pd.merge(data.data, izometria.data[['IzometrialapID','Anyagminoseg']], on='IzometrialapID', how='left')
 
     multiplier_action = MultiplierAction(anyag_modifier, 'Anyagminoseg', 'Szorzo', 'Munkaóra')
     data = multiplier_action.action(data)
@@ -171,7 +171,7 @@ def process_nyomasproba(data: Table, norms: Table) -> Table:
 
 if __name__ == '__main__':
     try:
-        process_excel('base.xlsx', 'out.xlsx')
+        process_excel('Torzs (2).xlsx', 'out2.xlsx')
         #process_spreadsheet()
         pass
     except:

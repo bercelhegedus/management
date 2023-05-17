@@ -91,7 +91,7 @@ class Workbook:
     def write_to_excel(self, file_path: str) -> None:
         with pd.ExcelWriter(file_path, engine='xlsxwriter') as writer:
             for table_name, table in self.tables.items():
-                table.data.to_excel(writer, sheet_name=table_name)
+                table.data.to_excel(writer, sheet_name=table_name, index=False)
 
 
     def write_to_google_sheets(self, service_account_file: str, file_name: str) -> str:
