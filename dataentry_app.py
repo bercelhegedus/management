@@ -58,6 +58,15 @@ def get_unique_values_c():
     unique_values = df['C'].unique().tolist()
     return jsonify(unique_values)
 
+@app.route('/save_data', methods=['POST'])
+def save_data():
+    data = request.json
+    new_df = pd.DataFrame(data)
+    # Do whatever you want with the new_df
+    print(new_df)
+    return jsonify({"message": "Data saved successfully!"})
+
+
 @app.route('/')
 def index():
     return render_template('dataentry_index.html')
