@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dynamic Table</title>
+</head>
+<body>
+    <select id="dropdown-a">
+        <option value="" disabled selected>Select a value for A</option>
+    </select>
+    <select id="dropdown-b" disabled>
+        <option value="" disabled selected>Select a value for B</option>
+    </select>
+    <select id="dropdown-c" disabled>
+        <option value="" disabled selected>Select a value for C</option>
+    </select>
+    <button onclick="fetchData()">Filter</button>
+    <table id="data-table" style="display: none;"></table>
+    <script src="{{ url_for('static', filename='js/dataentry.js') }}"></script>  
+</body>
+</html>

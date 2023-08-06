@@ -5,6 +5,9 @@ import logging
 from typing import List, Dict, Tuple, Optional, Union
 import xlsxwriter
 from logger import init_logger
+from unidecode import unidecode
+
+from copy import deepcopy
 
 import pdb
 
@@ -15,6 +18,7 @@ if TYPE_CHECKING:
 class Table:
     def __init__(self, data: pd.DataFrame):
         self.data = data
+        self.rename_columns_to_ascii()
 
     def __repr__(self):
         return self.data.__repr__()
@@ -34,13 +38,34 @@ class Table:
         self.data.update(other.data)
         self.data.drop([col for col in self.data.columns if col.endswith('_y')], axis=1, inplace=True)
 
+    def rename_columns(self, columns: dict, inplace: bool = False) -> None:
+        self.data.rename(columns=columns, inplace=inplace)
 
-    def rename_columns(self, columns: dict) -> None:
-        self.data.rename(columns=columns, inplace=True)
+    def rename_columns_to_ascii(self):
+        self.data.columns = [unidecode(col) for col in self.data.columns]
     
     def execute_action(self, action: 'Action') -> 'Table':
         return action.action(self)
     
+    def join(self, other: 'Table', how: str = 'inner', on: list = None, inplace: bool = False, columns:List = []) -> 'Table':
+        if how not in ['inner', 'outer', 'left']:
+            raise ValueError("Invalid join type. Expected one of: 'inner', 'outer', 'left'")
+
+        if columns:
+            other = deepcopy(other)
+            other.data = other.data[on + columns]
+
+        if on is not None:
+            result = self.data.merge(other.data, on=on, how=how)
+        else:
+            result = self.data.merge(other.data, left_index=True, right_index=True, how=how)
+
+        if inplace:
+            self.data = result
+            return self
+        else:
+            return Table(result)
+
 
 class Workbook:
     def __init__(self):
@@ -50,6 +75,8 @@ class Workbook:
         return "\n".join(f"{table_name}: {table}" for table_name, table in self.tables.items())
 
     def add_table(self, table_name: str, table: Table):
+        if not isinstance(table, Table):
+            raise ValueError(f"'table' must be of type 'Table', got '{type(table).__name__}' instead.")
         if table_name in self.tables:
             print(f"Warning: Overwriting existing table '{table_name}'")
         self.tables[table_name] = table
@@ -61,6 +88,8 @@ class Workbook:
             print(f"Error: Table '{table_name}' not found")
 
     def get_table(self, table_name: str) -> Table:
+        if table_name not in self.tables:
+            raise ValueError(f"Table '{table_name}' not found")
         return self.tables.get(table_name, None)
 
     @staticmethod

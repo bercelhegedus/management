@@ -34,9 +34,12 @@ class Interpolate1DAction(Action):
         if self.data_type_col is not None:
             for type_value in data[self.data_type_col].unique():
                 mask = (data[self.data_type_col] == type_value)
-                norms_filtered = norms[norms[type_value] != '']
-                f = interp1d(norms[self.regressor_col], norms_filtered[type_value], fill_value='extrapolate')
-                data.loc[mask, self.data_interpolated_col] = f(data.loc[mask, self.regressor_col].to_numpy()).tolist()
+                try:
+                    norms_filtered = norms[norms[type_value] != '']
+                    f = interp1d(norms[self.regressor_col], norms_filtered[type_value], fill_value='extrapolate')
+                    data.loc[mask, self.data_interpolated_col] = f(data.loc[mask, self.regressor_col].to_numpy()).tolist()
+                except:
+                    data.loc[mask, self.data_interpolated_col] = ''
         else:
             f = interp1d(norms[self.regressor_col], norms[self.norm_target_col], fill_value='extrapolate')
             data[self.data_interpolated_col] = f(data[self.regressor_col].to_numpy()).tolist()
@@ -79,10 +82,12 @@ class Interpolate2DAction(Action):
             for type_value in data[self.data_type_col].unique():
                 mask = (data[self.data_type_col] == type_value)         
                 norms_filtered = norms[norms[type_value] != '']
-                points = list(zip(norms_filtered[self.regressor_cols[0]], norms_filtered[self.regressor_cols[1]]))
-                f = LinearNDInterpolator(points, norms_filtered[type_value])
-                data.loc[mask, self.data_interpolated_col] = f(data.loc[mask, self.regressor_cols[0]].to_numpy(),
-                                                               data.loc[mask, self.regressor_cols[1]].to_numpy()).tolist()
+                try:
+                    points = list(zip(norms_filtered[self.regressor_cols[0]], norms_filtered[self.regressor_cols[1]]))
+                    f = LinearNDInterpolator(points, norms_filtered[type_value])
+                    data.loc[mask, self.data_interpolated_col] = f(data.loc[mask, self.regressor_cols[0]].to_numpy(), data.loc[mask, self.regressor_cols[1]].to_numpy()).tolist()
+                except:
+                    data.loc[mask, self.data_interpolated_col] = ''
         else:
             norms_filtered = norms[norms[self.norm_target_col] != '']
             points = list(zip(norms_filtered[self.regressor_cols[0]], norms_filtered[self.regressor_cols[1]]))
