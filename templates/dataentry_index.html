@@ -5,24 +5,32 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dynamic Table</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/dataentry_styles.css') }}">
-    <!-- Select2 CSS -->
+        <!-- Select2 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
-    <!-- Select2 JS -->
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
 </head>
 <body>
-    <select id="dropdown-a">
+    <select class = "select2" id="dropdown-a">
         <option value="" disabled selected>Select a value for A</option>
     </select>
-    <select id="dropdown-b" disabled>
+    <select class = "select2" id="dropdown-b" disabled>
         <option value="" disabled selected>Select a value for B</option>
     </select>
-    <select id="dropdown-c" disabled>
+    <select class = "select2" id="dropdown-c" disabled>
         <option value="" disabled selected>Select a value for C</option>
     </select>
     <button onclick="fetchData()">Filter</button>
     <button onclick="recordData()">Record</button>
     <table id="data-table" style="display: none;"></table>
-    <script src="{{ url_for('static', filename='js/dataentry.js') }}"></script>  
+    <script src="{{ url_for('static', filename='js/dataentry.js') }}"></script>
+    <script>
+        $(document).ready(function() {
+            $(".select2").select2();
+        });
+    </script>
+    
 </body>
 </html>

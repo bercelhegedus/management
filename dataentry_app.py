@@ -1,16 +1,29 @@
 from flask import Flask, jsonify, render_template, request
 import pandas as pd
+import  numpy as np
 
 app = Flask(__name__)
 
 def your_function():
-    df = pd.DataFrame({
-   'A': ['foo', 'bar', 'foo', 'bar', 'foo', 'bar', 'foo', 'foo'],
-   'B': ['one', 'one', 'two', 'three', 'two', 'two', 'one', 'three'],
-   'C': ['small', 'large', 'large', 'small', 'small', 'large', 'small', 'small'],
-   'D': [1, 2, 2, 3, 3, 4, 5, 6],
-   'E': [2, 4, 5, 5, 6, 6, 8, 9]
-    })
+    data = {
+        'A': ['foo', 'bar', 'foo', 'bar', 'foo', 'bar', 'foo', 'foo', 'bar', 'foo',
+            'bar', 'foo', 'foo', 'bar', 'foo', 'bar', 'foo', 'bar', 'foo', 'bar'],
+        'B': ['one', 'two', 'three', 'four', 'five', 'one', 'two', 'three', 'four', 'five',
+            'one', 'two', 'three', 'four', 'five', 'one', 'two', 'three', 'four', 'five'],
+        'C': ['small', 'large', 'medium', 'small', 'large', 'medium', 'small', 'large', 'medium', 'small',
+            'large', 'medium', 'small', 'large', 'medium', 'small', 'large', 'medium', 'small', 'large'],
+        'D': [1, 2, 2, 3, 3, 4, 5, 6, 2, 3, 4, 5, 7, 8, 9, 10, 12, 15, 16, 20],
+        'E': [2, 4, 5, 5, 6, 6, 8, 9, 7, 8, 10, 11, 13, 14, 18, 20, 22, 24, 26, 30]
+    }
+
+    df = pd.DataFrame(data)
+
+    # Define the categories for the new column 'F'
+    categories = ['cat1', 'cat2', 'cat3', 'cat4', 'cat5']
+
+    # Add new categorical column 'F'
+    df['F'] = np.random.choice(categories, df.shape[0])
+
     return df
 
 @app.route('/get_table', methods=['GET'])

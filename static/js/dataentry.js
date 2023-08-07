@@ -1,11 +1,22 @@
 // Function to populate the dropdown with unique values from column 'A'
 function populateDropdown(dropdownId, values) {
-    const dropdown = document.getElementById(dropdownId);
-    let options = `<option value="" disabled selected>Select a value for ${dropdownId.split('-')[1].toUpperCase()}</option>`;
+    const $dropdown = $(`#${dropdownId}`);
+
+    // Clear existing options
+    $dropdown.empty();
+
+    // Add placeholder
+    const placeholder = `<option value="" disabled selected>Select a value for ${dropdownId.split('-')[1].toUpperCase()}</option>`;
+    $dropdown.append(placeholder);
+
+    // Append new options
     values.forEach(value => {
-        options += `<option value="${value}">${value}</option>`;
+        const option = new Option(value, value, false, false);
+        $dropdown.append(option);
     });
-    dropdown.innerHTML = options;
+
+    // Re-initialize select2
+    $dropdown.select2().trigger('change');
 }
 
 let headers = []; // Global variable to store headers
@@ -60,37 +71,36 @@ function fetchData() {
 // Initial population of the dropdown with unique values from column 'A'
 fetch('/get_unique_values_a')
 .then(response => response.json())
-.then(data => populateDropdown(data));
+.then(data => populateDropdown('dropdown-a', data));
 
-document.getElementById('dropdown-a').addEventListener('change', function() {
+$('#dropdown-a').on('change', function() {
     const valueA = this.value;
     if (valueA) {
         fetch(`/get_unique_values_b?value_a=${valueA}`)
         .then(response => response.json())
         .then(data => {
             populateDropdown('dropdown-b', data);
-            document.getElementById('dropdown-b').disabled = false; // Enable dropdown B
+            $('#dropdown-b').prop('disabled', false); // Enable dropdown B
         });
     } else {
-        document.getElementById('dropdown-b').disabled = true; // Disable dropdown B if no value is selected for A
+        $('#dropdown-b').prop('disabled', true); // Disable dropdown B if no value is selected for A
     }
 });
 
-document.getElementById('dropdown-b').addEventListener('change', function() {
+$('#dropdown-b').on('change', function() {
     const valueA = document.getElementById('dropdown-a').value;
     const valueB = this.value;
-    if (valueB) {
+    if (valueA) {
         fetch(`/get_unique_values_c?value_a=${valueA}&value_b=${valueB}`)
         .then(response => response.json())
         .then(data => {
             populateDropdown('dropdown-c', data);
-            document.getElementById('dropdown-c').disabled = false; // Enable dropdown C
+            $('#dropdown-c').prop('disabled', false); // Enable dropdown B
         });
     } else {
-        document.getElementById('dropdown-c').disabled = true; // Disable dropdown C if no value is selected for B
+        $('#dropdown-b').prop('disabled', true); // Disable dropdown B if no value is selected for A
     }
 });
-
 
 // Populate dropdown A
 fetch('/get_unique_values_a')
@@ -152,3 +162,4 @@ document.addEventListener('change', function(event) {
         });
     }
 });
+
