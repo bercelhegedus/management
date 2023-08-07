@@ -71,6 +71,23 @@ def get_unique_values_c():
     unique_values = df['C'].unique().tolist()
     return jsonify(unique_values)
 
+@app.route('/get_column_type', methods=['GET'])
+def get_column_type():
+    column_name = request.args.get('column_name', None)
+    if column_name == 'A':
+        return jsonify({'type': 'static'})
+    elif column_name == 'B':
+        return jsonify({'type': 'static'})
+    elif column_name == 'C':
+        return jsonify({'type': 'static'})
+    elif column_name == 'D':
+        return jsonify({'type': 'number'})
+    elif column_name == 'E':
+        return jsonify({'type': 'number'})
+    elif column_name == 'F':
+        return jsonify({'type': 'categorical', 'values': ['cat1', 'cat2', 'cat3', 'cat4', 'cat5']})
+
+
 @app.route('/save_data', methods=['POST'])
 def save_data():
     data = request.json

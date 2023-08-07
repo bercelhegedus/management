@@ -13,13 +13,13 @@
 
 </head>
 <body>
-    <select class = "select2" id="dropdown-a">
+    <select class = "select2filter" id="dropdown-a">
         <option value="" disabled selected>Select a value for A</option>
     </select>
-    <select class = "select2" id="dropdown-b" disabled>
+    <select class = "select2filter" id="dropdown-b" disabled>
         <option value="" disabled selected>Select a value for B</option>
     </select>
-    <select class = "select2" id="dropdown-c" disabled>
+    <select class = "select2filter" id="dropdown-c" disabled>
         <option value="" disabled selected>Select a value for C</option>
     </select>
     <button onclick="fetchData()">Filter</button>
@@ -28,7 +28,7 @@
     <script src="{{ url_for('static', filename='js/dataentry.js') }}"></script>
     <script>
         $(document).ready(function() {
-            $(".select2").select2();
+            $(".select2filter").select2();
         });
     </script>
     

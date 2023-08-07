@@ -1,18 +1,28 @@
 // Function to populate the dropdown with unique values from column 'A'
-function populateDropdown(dropdownId, values) {
+function populateDropdown(dropdownId, values, startingValue, disableStartingValue = true) {
     const $dropdown = $(`#${dropdownId}`);
 
     // Clear existing options
     $dropdown.empty();
 
     // Add placeholder
-    const placeholder = `<option value="" disabled selected>Select a value for ${dropdownId.split('-')[1].toUpperCase()}</option>`;
-    $dropdown.append(placeholder);
+    if (disableStartingValue) {
+        const placeholder = `<option value="" disabled selected>${startingValue}</option>`;
+        $dropdown.append(placeholder);
+    }
+    else {
+        const placeholder = `<option value="" selected>${startingValue}</option>`;
+        $dropdown.append(placeholder);
+    }
+    
 
-    // Append new options
+    // Append new options, do not add starting value to the list of options
+
     values.forEach(value => {
-        const option = new Option(value, value, false, false);
-        $dropdown.append(option);
+        if (value !== startingValue) {
+            const option = new Option(value, value, false, false);
+            $dropdown.append(option);
+        }
     });
 
     // Re-initialize select2
@@ -47,31 +57,56 @@ function fetchData() {
         table.innerHTML = headerRow;
 
         // Populate table rows based on data
+        let dropdownsToPopulate = [];
         let rows = '<tbody>';
-        data.forEach(row => {
+        return Promise.all(data.map(row => {
             rows += '<tr>';
             rows += '<td><input type="checkbox" class="task-completion"></td>'; // Checkbox for task completion
-            headers.forEach(header => {
-                if (header === 'D' || header === 'E') {
-                    rows += `<td><input type="text" class="editable" value="${row[header]}" disabled></td>`;
-                } else {
-                    rows += `<td>${row[header]}</td>`;
-                }
+            return Promise.all(headers.map(header => {
+                return fetch('/get_column_type?column_name=' + header)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.type === 'number') {
+                        rows += `<td><input type="number" class="editable" value="${row[header]}" disabled></td>`;
+                    } 
+                    else if (data.type === 'categorical') {
+                        rows += `<td><select class = "select2value" id="dropdown-${header}"><option value="" disabled </option></select></td>`;
+                        console.log(`${data.values}`);
+                        dropdownsToPopulate.push({dropdownId: 'dropdown-' + header, values: data.values});
+                    }
+                    else {
+                        rows += `<td>${row[header]}</td>`;
+                        console.log(`${row[header]}`);
+                    }
+                });
+            }))
+            .then(() => {
+                rows += '</tr>';
+                return rows;
             });
-            rows += '</tr>';
-        });
-        rows += '</tbody>';
-        table.innerHTML = headerRow + rows;
+        }))
+        .then(rows => {
+            rows += '</tbody>';
+            console.log(rows);
+            table.innerHTML = headerRow + rows;
 
-        // Display the table
-        table.style.display = 'block';
+            // Here we populate the dropdowns
+            dropdownsToPopulate.forEach(({dropdownId, values}) => {
+                populateDropdown(dropdownId, values, values[0], false);
+            });
+            // Clear the array for the next fetchData call
+            dropdownsToPopulate = [];
+
+            // Display the table
+            table.style.display = 'block';
+        });
     });
 }
 
 // Initial population of the dropdown with unique values from column 'A'
 fetch('/get_unique_values_a')
 .then(response => response.json())
-.then(data => populateDropdown('dropdown-a', data));
+.then(data => populateDropdown('dropdown-a', data, 'Select a value for A'));
 
 $('#dropdown-a').on('change', function() {
     const valueA = this.value;
@@ -79,7 +114,7 @@ $('#dropdown-a').on('change', function() {
         fetch(`/get_unique_values_b?value_a=${valueA}`)
         .then(response => response.json())
         .then(data => {
-            populateDropdown('dropdown-b', data);
+            populateDropdown('dropdown-b', data, 'Select a value for B');
             $('#dropdown-b').prop('disabled', false); // Enable dropdown B
         });
     } else {
@@ -94,7 +129,7 @@ $('#dropdown-b').on('change', function() {
         fetch(`/get_unique_values_c?value_a=${valueA}&value_b=${valueB}`)
         .then(response => response.json())
         .then(data => {
-            populateDropdown('dropdown-c', data);
+            populateDropdown('dropdown-c', data, 'Select a value for C');
             $('#dropdown-c').prop('disabled', false); // Enable dropdown B
         });
     } else {
@@ -105,7 +140,7 @@ $('#dropdown-b').on('change', function() {
 // Populate dropdown A
 fetch('/get_unique_values_a')
 .then(response => response.json())
-.then(data => populateDropdown('dropdown-a', data));
+.then(data => populateDropdown('dropdown-a', data, 'Select a value for A'));
 
 
 let recordedData = []; // This will store the recorded data
@@ -155,10 +190,16 @@ document.addEventListener('change', function(event) {
     if (event.target.classList.contains('task-completion')) {
         const row = event.target.closest('tr');
         const inputs = row.querySelectorAll('input.editable');
-        
+        //Dropdowns with class select2value
+        const dropdowns = row.querySelectorAll('select.select2value');
         // Toggle editability based on checkbox state
         inputs.forEach(input => {
             input.disabled = !event.target.checked;
+        });
+
+        // Toggle editability based on checkbox state
+        dropdowns.forEach(dropdown => {
+            dropdown.disabled = !event.target.checked;
         });
     }
 });
