@@ -79,6 +79,8 @@ function fetchData() {
                         rows += `<td><input type="number" class="editable" value="${row[header]}" disabled></td>`;
                     } else if (typeData.type === 'categorical') {
                         rows += `<td><select class="select2value" id="dropdown-${header}-${rowIndex}" disabled><option value="" disabled></option></select></td>`;
+                    } else if (typeData.type === 'date') {
+                        rows += `<td><input type="date" class="editable" value="${row[header]}" disabled></td>`;
                     } else {
                         rows += `<td>${row[header]}</td>`;
                     }
@@ -203,6 +205,19 @@ document.addEventListener('change', function(event) {
         dropdowns.forEach(dropdown => {
             dropdown.disabled = !event.target.checked;
         });
+
+        // Set date input to today's date if checkbox is checked
+        if (event.target.checked) {
+            const dateInput = row.querySelector('input[type="date"]');
+            if (!dateInput.value){
+                dateInput.value = new Date().toISOString().split('T')[0];
+            }
+        }
+        // Clear date input if checkbox is unchecked
+        else {
+            const dateInput = row.querySelector('input[type="date"]');
+            dateInput.value = '';
+        }
     }
 });
 

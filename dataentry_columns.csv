@@ -1,20 +1,21 @@
 category,column,type,priority
-,Izometria,static,1
-,Lap,static,2
-,Kategoria,static,3
-,Sorszam,static,4
-,Munkaora,static,5
-,Tipus,static,6
-Csovezetek,Hossz,static,9
-Csovezetek,Kulso atmero,static,7
-Csovezetek,Falvastagsag,static,8
-Csovezetek,Elkeszult (m),number,10
-Hegesztes,Kulso atmero,static,7
-Hegesztes,Falvastagsag,static,8
-Hegesztes,Elkeszitette,categorical,9
-Karimaszerles,DN,static,7
-Karimaszerles,Nyomasfokozat,static,8
-Karimaszerles,Elkeszitette,categorical,9
-Csotarto,Suly,static,7
-Nyomasproba,Hossz,static,7
-Nyomasproba,Kulso atmero,static,8
+,Izometria,static,2
+,Lap,static,3
+,Kategoria,static,4
+,Sorszam,static,5
+,Munkaora,static,6
+,Tipus,static,7
+,Datum,date,1
+Csovezetek,Hossz,static,10
+Csovezetek,Kulso atmero,static,8
+Csovezetek,Falvastagsag,static,9
+Csovezetek,Elkeszult (m),number,11
+Hegesztes,Kulso atmero,static,8
+Hegesztes,Falvastagsag,static,9
+Hegesztes,Elkeszitette,categorical,10
+Karimaszerles,DN,static,8
+Karimaszerles,Nyomasfokozat,static,9
+Karimaszerles,Elkeszitette,categorical,10
+Csotarto,Suly,static,8
+Nyomasproba,Hossz,static,8
+Nyomasproba,Kulso atmero,static,9

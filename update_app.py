@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, send_file, jsonify, make_response
+from flask import Flask, render_template, request, send_file, jsonify, make_response, Blueprint
 import os
 import logging
 from normhours2 import process_excel, process_spreadsheet, process_all
@@ -6,11 +6,11 @@ from tables import Workbook
 import tempfile
 import io
 
-app = Flask(__name__)
+update_blueprint = Blueprint('update_update_blueprint', __name__)
 
-@app.route('/', methods=['GET', 'POST'])
+@update_blueprint.route('/update', methods=['GET', 'POST'])
 def index():
-    return render_template('index.html')
+    return render_template('update_index.html')
 
 
 
@@ -36,7 +36,7 @@ def get_output_bytes(input_file):
     
     return output
 
-@app.route('/process_excel', methods=['POST'])
+@update_blueprint.route('/process_excel', methods=['POST'])
 def process_excel_route():
     file = request.files['input_file']
     print(file.filename)
@@ -49,7 +49,7 @@ def process_excel_route():
     return response
 
 
-@app.route('/process_spreadsheet', methods=['POST'])
+@update_blueprint.route('/process_spreadsheet', methods=['POST'])
 def process_spreadsheet_route():
     # Call your process_spreadsheet function here
     try:
@@ -60,6 +60,3 @@ def process_spreadsheet_route():
         return jsonify({'message': f'Error updating Google Sheets: {str(e)}'}), 500
 
     return jsonify({'message': 'Google Sheets updated.'}), 200
-
-if __name__ == '__main__':
-    app.run(debug=True)
