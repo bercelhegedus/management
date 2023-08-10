@@ -46,18 +46,11 @@ function fetchData() {
     .then(data => {
         headers = Object.keys(data[0]);
         
-        // Fetch column data types for all headers at once
-        const headerTypePromises = headers.map(header => 
-            fetch(`/get_column_type?column_name=${header}&kategoria=${kategoria}`)
-            .then(response => response.json())
-        );
-        
-        return Promise.all(headerTypePromises).then(headerTypes => {
-            const headerTypeMap = {};
-            headerTypes.forEach((typeData, index) => {
-                headerTypeMap[headers[index]] = typeData;
-            });
-
+        // Fetch column data types for all headers in a single request
+        const headersString = headers.join(',');
+        fetch(`/get_column_types?column_names=${headersString}&kategoria=${kategoria}`)
+        .then(response => response.json())
+        .then(headerTypeMap => {
             headers.sort((a, b) => {
                 const priorityA = headerTypeMap[a].priority !== undefined ? headerTypeMap[a].priority : Infinity;
                 const priorityB = headerTypeMap[b].priority !== undefined ? headerTypeMap[b].priority : Infinity;

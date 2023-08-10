@@ -62,29 +62,41 @@ def get_unique_values_kategoria():
     unique_values = df['Kategoria'].unique().tolist()
     return jsonify(unique_values)
 
-@app.route('/get_column_type', methods=['GET'])
-def get_column_type(column_types: pd.DataFrame = column_types):
-    column_name = request.args.get('column_name', None)
+@app.route('/get_column_types', methods=['GET'])
+def get_column_types(column_types: pd.DataFrame = column_types):
+    column_names = request.args.get('column_names', None)
     category = request.args.get('kategoria', None)
 
-    categoryless = column_types[column_types['category'].isnull()]
 
-    if column_name in categoryless['column'].unique():
-        column_type = categoryless[categoryless['column'] == column_name]['type'].iloc[0]
-        priority = categoryless[categoryless['column'] == column_name]['priority'].iloc[0]
-    elif column_name in column_types[column_types['category'] == category]['column'].unique():
-        column_type = column_types[column_types['category'] == category][column_types['column'] == column_name]['type'].iloc[0]
-        priority = column_types[column_types['category'] == category][column_types['column'] == column_name]['priority'].iloc[0]
-    else:
-        column_type = 'exclude'
-        priority = 0
+    if not column_names:
+        return jsonify({}), 400  # Return a bad request if no column names are provided
 
-    if column_type == 'exclude':
-        return jsonify({'type': column_type})
-    elif column_type == 'categorical':
-        return jsonify({'type': column_type, 'values': accapted_values(column_name), 'priority': priority})
-    else:
-        return jsonify({'type': column_type, 'priority': priority})
+    # Splitting the comma-separated column names
+    column_names = column_names.split(',')
+
+    # Fetching the types for each column
+    result = {}
+    for column_name in column_names:
+        
+        categoryless = column_types[column_types['category'].isnull()]
+
+        if column_name in categoryless['column'].unique():
+            column_type = categoryless[categoryless['column'] == column_name]['type'].iloc[0]
+            priority = categoryless[categoryless['column'] == column_name]['priority'].iloc[0]
+        elif column_name in column_types[column_types['category'] == category]['column'].unique():
+            column_type = column_types[column_types['category'] == category][column_types['column'] == column_name]['type'].iloc[0]
+            priority = column_types[column_types['category'] == category][column_types['column'] == column_name]['priority'].iloc[0]
+        else:
+            column_type = 'exclude'
+            priority = 0
+
+        if column_type == 'exclude':
+            result[column_name] = {'type': column_type}
+        elif column_type == 'categorical':
+            result[column_name] = {'type': column_type, 'values': accapted_values(column_name), 'priority': priority}
+        else:
+            result[column_name] = {'type': column_type, 'priority': priority}
+    return jsonify(result)
 
 @app.route('/save_data', methods=['POST'])
 def save_data():
