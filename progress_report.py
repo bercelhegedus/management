@@ -252,6 +252,10 @@ def aggregate_nyomasproba(data_workbook, nyomonkovetes_workbook):
 
     return nyomasproba_nyomonkovetes
 
+
+
+
+
     
 
 def join_nyomonkovetes(data_workbook, nyomonkovetes_workbook):
@@ -340,10 +344,7 @@ def export_excel():
 
     
 def main():
-
     export_excel()
-
-
 
 if __name__ == '__main__':
     try:

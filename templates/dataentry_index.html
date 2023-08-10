@@ -1,36 +1,34 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dynamic Table</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/dataentry_styles.css') }}">
-        <!-- Select2 CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
-
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-
-</head>
-<body>
-    <select class = "select2filter" id="dropdown-a">
-        <option value="" disabled selected>Select a value for A</option>
-    </select>
-    <select class = "select2filter" id="dropdown-b" disabled>
-        <option value="" disabled selected>Select a value for B</option>
-    </select>
-    <select class = "select2filter" id="dropdown-c" disabled>
-        <option value="" disabled selected>Select a value for C</option>
-    </select>
-    <button onclick="fetchData()">Filter</button>
-    <button onclick="recordData()">Record</button>
-    <table id="data-table" style="display: none;"></table>
-    <script src="{{ url_for('static', filename='js/dataentry.js') }}"></script>
-    <script>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Dynamic Table</title>
+<link href="{{ url_for('static', filename='css/dataentry_styles.css') }}" rel="stylesheet"/>
+<!-- Select2 CSS -->
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+</link></head>
+<body><header><h1>Nyomonkövetés</h1><span>by Bercel Hegedűs</span></header>
+<select class="select2filter" id="dropdown-izometria">
+<option disabled="" selected="" value="">Izometria</option>
+</select>
+<select class="select2filter" disabled="" id="dropdown-lap">
+<option disabled="" selected="" value="">Lap</option>
+</select>
+<select class="select2filter" disabled="" id="dropdown-kategoria">
+<option disabled="" selected="" value="">Kategoria</option>
+</select>
+<button onclick="fetchData()">Filter</button>
+<button onclick="recordData()">Record</button>
+<table id="data-table" style="display: none;"></table>
+<script src="{{ url_for('static', filename='js/dataentry.js') }}"></script>
+<script>
         $(document).ready(function() {
             $(".select2filter").select2();
         });
     </script>
-    
 </body>
 </html>

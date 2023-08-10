@@ -33,115 +33,124 @@ let headers = []; // Global variable to store headers
 
 // Function to fetch and display data based on the selected value in the dropdown
 function fetchData() {
+    const izometria = document.getElementById('dropdown-izometria').value;
+    const lap = document.getElementById('dropdown-lap').value;
+    const kategoria = document.getElementById('dropdown-kategoria').value;
 
-    const valueA = document.getElementById('dropdown-a').value;
-    const valueB = document.getElementById('dropdown-b').value;
-    const valueC = document.getElementById('dropdown-c').value;
-
-    if (!valueA || !valueB || !valueC) {
+    if (!izometria || !lap || !kategoria) {
         return; // Exit if any value is not selected
     }
 
-    fetch(`/get_table?value_a=${valueA}&value_b=${valueB}&value_c=${valueC}`)
+    fetch(`/get_table?izometria=${izometria}&lap=${lap}&kategoria=${kategoria}`)
     .then(response => response.json())
     .then(data => {
-        const table = document.getElementById('data-table');
-        // Create table headers based on object keys
         headers = Object.keys(data[0]);
-        let headerRow = '<thead><tr>';
-        headerRow += '<th>Complete</th>';
-        headers.forEach(header => {
-            headerRow += `<th>${header}</th>`;
-        });
-        headerRow += '</tr></thead>';
-        table.innerHTML = headerRow;
+        
+        // Fetch column data types for all headers at once
+        const headerTypePromises = headers.map(header => 
+            fetch(`/get_column_type?column_name=${header}&kategoria=${kategoria}`)
+            .then(response => response.json())
+        );
+        
+        return Promise.all(headerTypePromises).then(headerTypes => {
+            const headerTypeMap = {};
+            headerTypes.forEach((typeData, index) => {
+                headerTypeMap[headers[index]] = typeData;
+            });
 
-        // Populate table rows based on data
-        let dropdownsToPopulate = [];
-        let rows = '<tbody>';
-        return Promise.all(data.map(row => {
-            rows += '<tr>';
-            rows += '<td><input type="checkbox" class="task-completion"></td>'; // Checkbox for task completion
-            return Promise.all(headers.map(header => {
-                return fetch('/get_column_type?column_name=' + header)
-                .then(response => response.json())
-                .then(data => {
-                    if (data.type === 'number') {
+            headers.sort((a, b) => {
+                const priorityA = headerTypeMap[a].priority !== undefined ? headerTypeMap[a].priority : Infinity;
+                const priorityB = headerTypeMap[b].priority !== undefined ? headerTypeMap[b].priority : Infinity;
+                return priorityA - priorityB;
+            });
+                        
+            // Filter out headers with type 'exclude'
+            const validHeaders = headers.filter(header => headerTypeMap[header].type !== 'exclude');
+
+            // Create table headers based on validHeaders
+            let headerRow = '<thead><tr>';
+            headerRow += '<th>Complete</th>';
+            validHeaders.forEach(header => {
+                headerRow += `<th>${header}</th>`;
+            });
+            headerRow += '</tr></thead>';
+            
+            // Process rows with the fetched header types
+            let rows = '<tbody>';
+            data.forEach((row, rowIndex) => {
+                rows += '<tr>';
+                rows += '<td><input type="checkbox" class="task-completion"></td>';
+                validHeaders.forEach(header => {
+                    const typeData = headerTypeMap[header];
+                    if (typeData.type === 'number') {
                         rows += `<td><input type="number" class="editable" value="${row[header]}" disabled></td>`;
-                    } 
-                    else if (data.type === 'categorical') {
-                        rows += `<td><select class = "select2value" id="dropdown-${header}"><option value="" disabled </option></select></td>`;
-                        console.log(`${data.values}`);
-                        dropdownsToPopulate.push({dropdownId: 'dropdown-' + header, values: data.values});
-                    }
-                    else {
+                    } else if (typeData.type === 'categorical') {
+                        rows += `<td><select class="select2value" id="dropdown-${header}-${rowIndex}" disabled><option value="" disabled></option></select></td>`;
+                    } else {
                         rows += `<td>${row[header]}</td>`;
-                        console.log(`${row[header]}`);
                     }
                 });
-            }))
-            .then(() => {
                 rows += '</tr>';
-                return rows;
             });
-        }))
-        .then(rows => {
             rows += '</tbody>';
-            console.log(rows);
+            
+            const table = document.getElementById('data-table');
             table.innerHTML = headerRow + rows;
 
-            // Here we populate the dropdowns
-            dropdownsToPopulate.forEach(({dropdownId, values}) => {
-                populateDropdown(dropdownId, values, values[0], false);
+            // Populate dropdowns
+            const tableDropdowns = document.querySelectorAll('#data-table select.select2value');
+            tableDropdowns.forEach(dropdown => {
+                const header = dropdown.id.split('-')[1]
+                const values = headerTypeMap[header].values;
+                populateDropdown(dropdown.id, values, header);
             });
-            // Clear the array for the next fetchData call
-            dropdownsToPopulate = [];
 
-            // Display the table
             table.style.display = 'block';
         });
+    })
+    .catch(error => {
+        console.error('Error fetching data:', error);
     });
 }
 
 // Initial population of the dropdown with unique values from column 'A'
-fetch('/get_unique_values_a')
+fetch('/get_unique_values_izometria')
 .then(response => response.json())
-.then(data => populateDropdown('dropdown-a', data, 'Select a value for A'));
+.then(data => {
+    populateDropdown('dropdown-izometria', data, 'Izometria');
+});
 
-$('#dropdown-a').on('change', function() {
-    const valueA = this.value;
-    if (valueA) {
-        fetch(`/get_unique_values_b?value_a=${valueA}`)
+
+
+
+$('#dropdown-izometria').on('change', function() {
+    const izometria = this.value;
+    if (izometria) {
+        fetch(`/get_unique_values_lap?izometria=${izometria}`)
         .then(response => response.json())
         .then(data => {
-            populateDropdown('dropdown-b', data, 'Select a value for B');
-            $('#dropdown-b').prop('disabled', false); // Enable dropdown B
+            populateDropdown('dropdown-lap', data, 'Lap');
+            $('#dropdown-lap').prop('disabled', false); // Enable dropdown B
         });
     } else {
-        $('#dropdown-b').prop('disabled', true); // Disable dropdown B if no value is selected for A
+        $('#dropdown-lap').prop('disabled', true); // Disable dropdown B if no value is selected for A
     }
 });
 
-$('#dropdown-b').on('change', function() {
-    const valueA = document.getElementById('dropdown-a').value;
-    const valueB = this.value;
-    if (valueA) {
-        fetch(`/get_unique_values_c?value_a=${valueA}&value_b=${valueB}`)
+$('#dropdown-lap').on('change', function() {
+    const izometria = document.getElementById('dropdown-izometria').value;
+    const lap = this.value;
+    if (izometria) {
+        fetch(`/get_unique_values_kategoria?izometria=${izometria}&lap=${lap}`)
         .then(response => response.json())
         .then(data => {
-            populateDropdown('dropdown-c', data, 'Select a value for C');
-            $('#dropdown-c').prop('disabled', false); // Enable dropdown B
+            populateDropdown('dropdown-kategoria', data, 'Kategoria');
+            $('#dropdown-kategoria').prop('disabled', false); // Enable dropdown B
         });
     } else {
-        $('#dropdown-b').prop('disabled', true); // Disable dropdown B if no value is selected for A
+        $('#dropdown-lap').prop('disabled', true); // Disable dropdown B if no value is selected for A
     }
 });
-
-// Populate dropdown A
-fetch('/get_unique_values_a')
-.then(response => response.json())
-.then(data => populateDropdown('dropdown-a', data, 'Select a value for A'));
-
 
 let recordedData = []; // This will store the recorded data
 
@@ -167,9 +176,9 @@ function recordData() {
     });
 
     // Reset filters and table
-    document.getElementById('dropdown-a').selectedIndex = 0;
-    document.getElementById('dropdown-b').selectedIndex = 0;
-    document.getElementById('dropdown-c').selectedIndex = 0;
+    document.getElementById('dropdown-izometria').selectedIndex = 0;
+    document.getElementById('dropdown-lap').selectedIndex = 0;
+    document.getElementById('dropdown-kategoria').selectedIndex = 0;
     document.getElementById('data-table').innerHTML = '';
 
     fetch('/save_data', {

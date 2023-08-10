@@ -1,92 +1,90 @@
 from flask import Flask, jsonify, render_template, request
 import pandas as pd
 import  numpy as np
+from dataentry_get_data import create_combined_table, get_employees
+import pandas as pd
+
+import pdb
+
+
+table = create_combined_table()
+
+column_types = pd.read_csv('dataentry_columns.csv', dtype = str)
 
 app = Flask(__name__)
 
-def your_function():
-    data = {
-        'A': ['foo', 'bar', 'foo', 'bar', 'foo', 'bar', 'foo', 'foo', 'bar', 'foo',
-            'bar', 'foo', 'foo', 'bar', 'foo', 'bar', 'foo', 'bar', 'foo', 'bar'],
-        'B': ['one', 'two', 'three', 'four', 'five', 'one', 'two', 'three', 'four', 'five',
-            'one', 'two', 'three', 'four', 'five', 'one', 'two', 'three', 'four', 'five'],
-        'C': ['small', 'large', 'medium', 'small', 'large', 'medium', 'small', 'large', 'medium', 'small',
-            'large', 'medium', 'small', 'large', 'medium', 'small', 'large', 'medium', 'small', 'large'],
-        'D': [1, 2, 2, 3, 3, 4, 5, 6, 2, 3, 4, 5, 7, 8, 9, 10, 12, 15, 16, 20],
-        'E': [2, 4, 5, 5, 6, 6, 8, 9, 7, 8, 10, 11, 13, 14, 18, 20, 22, 24, 26, 30]
-    }
-
-    df = pd.DataFrame(data)
-
-    # Define the categories for the new column 'F'
-    categories = ['cat1', 'cat2', 'cat3', 'cat4', 'cat5']
-
-    # Add new categorical column 'F'
-    df['F'] = np.random.choice(categories, df.shape[0])
-
-    return df
+def accapted_values(column_name: str):
+    if column_name == 'Elkeszitette':
+        return get_employees()['Azonosito'].unique().tolist()
 
 @app.route('/get_table', methods=['GET'])
 def get_table():
-    value_a = request.args.get('value_a', None)
-    value_b = request.args.get('value_b', None)
-    value_c = request.args.get('value_c', None)
-    
-    df = your_function()
-    
-    if value_a:
-        df = df[df['A'] == value_a]
-    if value_b:
-        df = df[df['B'] == value_b]
-    if value_c:
-        df = df[df['C'] == value_c]
-        
+    izometria = request.args.get('izometria', None)
+    lap = request.args.get('lap', None)
+    kategoria = request.args.get('kategoria', None)
+
+    df = table
+
+    if izometria:
+        df = df[df['Izometria'] == izometria]
+    if lap:
+        df = df[df['Lap'] == lap]
+    if kategoria:
+        df = df[df['Kategoria'] == kategoria]
+
     return jsonify(df.to_dict(orient='records'))
 
-@app.route('/get_unique_values_a', methods=['GET'])
-def get_unique_values():
-    df = your_function()
-    unique_values = df['A'].unique().tolist()
-    print(unique_values)
+@app.route('/get_unique_values_izometria', methods=['GET'])
+def get_unique_values_izometria():
+    df = table
+    unique_values = df['Izometria'].unique().tolist()
     return jsonify(unique_values)
 
-@app.route('/get_unique_values_b', methods=['GET'])
-def get_unique_values_b():
-    value_a = request.args.get('value_a', None)
-    df = your_function()
-    if value_a:
-        df = df[df['A'] == value_a]
-    unique_values = df['B'].unique().tolist()
+@app.route('/get_unique_values_lap', methods=['GET'])
+def get_unique_values_lap():
+    izometria = request.args.get('izometria', None)
+    df = table
+    if izometria:
+        df = df[df['Izometria'] == izometria]
+    unique_values = df['Lap'].unique().tolist()
     return jsonify(unique_values)
 
-@app.route('/get_unique_values_c', methods=['GET'])
-def get_unique_values_c():
-    value_a = request.args.get('value_a', None)
-    value_b = request.args.get('value_b', None)
-    df = your_function()
-    if value_a:
-        df = df[df['A'] == value_a]
-    if value_b:
-        df = df[df['B'] == value_b]
-    unique_values = df['C'].unique().tolist()
+@app.route('/get_unique_values_kategoria', methods=['GET'])
+def get_unique_values_kategoria():
+    izometria = request.args.get('izometria', None)
+    lap = request.args.get('lap', None)
+    df = table
+
+    if izometria:
+        df = df[df['Izometria'] == izometria]
+    if lap:
+        df = df[df['Lap'] == lap]
+    unique_values = df['Kategoria'].unique().tolist()
     return jsonify(unique_values)
 
 @app.route('/get_column_type', methods=['GET'])
-def get_column_type():
+def get_column_type(column_types: pd.DataFrame = column_types):
     column_name = request.args.get('column_name', None)
-    if column_name == 'A':
-        return jsonify({'type': 'static'})
-    elif column_name == 'B':
-        return jsonify({'type': 'static'})
-    elif column_name == 'C':
-        return jsonify({'type': 'static'})
-    elif column_name == 'D':
-        return jsonify({'type': 'number'})
-    elif column_name == 'E':
-        return jsonify({'type': 'number'})
-    elif column_name == 'F':
-        return jsonify({'type': 'categorical', 'values': ['cat1', 'cat2', 'cat3', 'cat4', 'cat5']})
+    category = request.args.get('kategoria', None)
 
+    categoryless = column_types[column_types['category'].isnull()]
+
+    if column_name in categoryless['column'].unique():
+        column_type = categoryless[categoryless['column'] == column_name]['type'].iloc[0]
+        priority = categoryless[categoryless['column'] == column_name]['priority'].iloc[0]
+    elif column_name in column_types[column_types['category'] == category]['column'].unique():
+        column_type = column_types[column_types['category'] == category][column_types['column'] == column_name]['type'].iloc[0]
+        priority = column_types[column_types['category'] == category][column_types['column'] == column_name]['priority'].iloc[0]
+    else:
+        column_type = 'exclude'
+        priority = 0
+
+    if column_type == 'exclude':
+        return jsonify({'type': column_type})
+    elif column_type == 'categorical':
+        return jsonify({'type': column_type, 'values': accapted_values(column_name), 'priority': priority})
+    else:
+        return jsonify({'type': column_type, 'priority': priority})
 
 @app.route('/save_data', methods=['POST'])
 def save_data():
@@ -103,4 +101,6 @@ def index():
 
 
 if __name__ == '__main__':
+
     app.run(debug=True)
+
