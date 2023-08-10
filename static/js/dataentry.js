@@ -204,6 +204,8 @@ document.addEventListener('change', function(event) {
         // Toggle editability based on checkbox state
         dropdowns.forEach(dropdown => {
             dropdown.disabled = !event.target.checked;
+            // Reset dropdown value
+            dropdown.selectedIndex = 0;
         });
 
         // Set date input to today's date if checkbox is checked
