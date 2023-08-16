@@ -1,7 +1,18 @@
 import pandas as pd
 import pdb
-from progress_report import read_spreadsheets
 from tables import Table, Workbook
+
+def read_spreadsheets():
+    
+    SERVICE_ACCOUNT_FILE = 'service_account.json'
+    TORZSSHEET_ID = '1LtCsUPBqGYpnEZXyKFFoaPaeFfe1CLU-O9wiTMGqJUE'
+    NYOMONKOVETES = '1yzf9lybroinPysPDB79MpXn1fGG4PyshhpRv1TnYt4U'
+
+    data_workbook = Workbook.read_google_sheets_to_workbook(SERVICE_ACCOUNT_FILE, TORZSSHEET_ID, rename_columns_to_ascii=True)
+    nyomonkovetes_workbook = Workbook.read_google_sheets_to_workbook(SERVICE_ACCOUNT_FILE, NYOMONKOVETES, rename_columns_to_ascii=True)
+
+    return data_workbook, nyomonkovetes_workbook
+
 
 def cast_to_string(val):
     if pd.isna(val):

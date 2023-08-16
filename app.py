@@ -1,19 +1,13 @@
 
 from flask import Flask, render_template, redirect, url_for, request, flash
 from flask_login import LoginManager, login_user, login_required, logout_user, current_user
-from dataentry_app import dataentry_blueprint
+from tracking_app import tracking_blueprint
 from update_app import update_blueprint
-from users import User
-
-# Example users (id, username, password)
-users = [
-    User(1, 'alice', 'password123'),
-    User(2, 'bob', 'securepass')
-]
+from users import users
 
 app = Flask(__name__)
 
-app.register_blueprint(dataentry_blueprint)
+app.register_blueprint(tracking_blueprint)
 app.register_blueprint(update_blueprint)
 
 app.config['SECRET_KEY'] = 'your_secret_key_here'  # Change this to a random string
@@ -37,6 +31,11 @@ def login():
             return redirect(url_for('landing'))
         flash('Invalid username or password.')
     return render_template('login.html')
+    
+@app.route('/get_current_username')
+@login_required
+def get_current_username():
+    return {"username": current_user.username}
 
 @app.route('/logout')
 @login_required

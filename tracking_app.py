@@ -2,23 +2,25 @@ from flask import Flask, jsonify, render_template, request, Blueprint
 from flask_login import LoginManager, login_user, login_required, logout_user, current_user
 import pandas as pd
 import  numpy as np
-from dataentry_get_data import create_combined_table, get_employees
+from tracking_get_data import create_combined_table, get_employees
 import pandas as pd
 
 import pdb
 
-dataentry_blueprint = Blueprint('dataentry_dataentry_blueprint', __name__)
+tracking_blueprint = Blueprint('tracking_blueprint', __name__)
 
 table = create_combined_table()
 
-column_types = pd.read_csv('dataentry_columns.csv', dtype = str)
+
+
+column_types = pd.read_csv('tracking_columns.csv', dtype = str)
 
 
 def accapted_values(column_name: str):
     if column_name == 'Elkeszitette':
         return get_employees()['Azonosito'].unique().tolist()
 
-@dataentry_blueprint.route('/get_table', methods=['GET'])
+@tracking_blueprint.route('/get_table', methods=['GET'])
 def get_table():
     izometria = request.args.get('izometria', None)
     lap = request.args.get('lap', None)
@@ -35,13 +37,13 @@ def get_table():
 
     return jsonify(df.to_dict(orient='records'))
 
-@dataentry_blueprint.route('/get_unique_values_izometria', methods=['GET'])
+@tracking_blueprint.route('/get_unique_values_izometria', methods=['GET'])
 def get_unique_values_izometria():
     df = table
     unique_values = df['Izometria'].unique().tolist()
     return jsonify(unique_values)
 
-@dataentry_blueprint.route('/get_unique_values_lap', methods=['GET'])
+@tracking_blueprint.route('/get_unique_values_lap', methods=['GET'])
 def get_unique_values_lap():
     izometria = request.args.get('izometria', None)
     df = table
@@ -50,7 +52,7 @@ def get_unique_values_lap():
     unique_values = df['Lap'].unique().tolist()
     return jsonify(unique_values)
 
-@dataentry_blueprint.route('/get_unique_values_kategoria', methods=['GET'])
+@tracking_blueprint.route('/get_unique_values_kategoria', methods=['GET'])
 def get_unique_values_kategoria():
     izometria = request.args.get('izometria', None)
     lap = request.args.get('lap', None)
@@ -63,7 +65,7 @@ def get_unique_values_kategoria():
     unique_values = df['Kategoria'].unique().tolist()
     return jsonify(unique_values)
 
-@dataentry_blueprint.route('/get_column_types', methods=['GET'])
+@tracking_blueprint.route('/get_column_types', methods=['GET'])
 def get_column_types(column_types: pd.DataFrame = column_types):
     column_names = request.args.get('column_names', None)
     category = request.args.get('kategoria', None)
@@ -99,7 +101,7 @@ def get_column_types(column_types: pd.DataFrame = column_types):
             result[column_name] = {'type': column_type, 'priority': priority}
     return jsonify(result)
 
-@dataentry_blueprint.route('/save_data', methods=['POST'])
+@tracking_blueprint.route('/save_data', methods=['POST'])
 def save_data():
     data = request.json
     new_df = pd.DataFrame(data)
@@ -108,9 +110,9 @@ def save_data():
     return jsonify({"message": "Data saved successfully!"})
 
 
-@dataentry_blueprint.route('/nyomonkovetes')
+@tracking_blueprint.route('/nyomonkovetes')
 @login_required
 def index():
-    return render_template('dataentry_index.html')
+    return render_template('tracking_index.html')
 
 

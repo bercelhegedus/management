@@ -1,10 +1,11 @@
 from werkzeug.security import generate_password_hash, check_password_hash
 
 class User():
-    def __init__(self, id, username, password):
+    def __init__(self, id, username, password, alvallalkozok):
         self.id = id
         self.username = username
         self.password_hash = generate_password_hash(password)
+        self.alvallalkozok = alvallalkozok
 
     def verify_password(self, password):
         return check_password_hash(self.password_hash, password)
@@ -24,3 +25,10 @@ class User():
     def get_id(self):
         return str(self.id)  # Python 3
 
+
+
+# Example users (id, username, password)
+users = [
+    User(1, 'test', 'test123', ['Privát Technoszer']),
+    User(2, 'baloghj', 'kkhalas', ['Privát Technoszer']),
+]

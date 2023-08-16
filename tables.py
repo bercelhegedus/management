@@ -16,8 +16,11 @@ if TYPE_CHECKING:
     from actions import Action
 
 class Table:
-    def __init__(self, data: pd.DataFrame):
+    def __init__(self, data: pd.DataFrame, rename_columns_to_ascii: bool = False):
         self.data = data
+        if rename_columns_to_ascii:
+            self.rename_columns_to_ascii()
+        
 
     def __repr__(self):
         return self.data.__repr__()
@@ -96,25 +99,25 @@ class Workbook:
         return self.tables.get(table_name, None)
 
     @staticmethod
-    def read_google_sheets_to_workbook(service_account_file: str, tableid: str) -> 'Workbook':
+    def read_google_sheets_to_workbook(service_account_file: str, tableid: str, rename_columns_to_ascii: bool = False) -> 'Workbook':
         service = _get_service(service_account_file)
         data_dict = _process_all_tables(service, tableid)
         
         workbook = Workbook()
         for sheet_name, df in data_dict.items():
-            table = Table(df)
+            table = Table(df, rename_columns_to_ascii=rename_columns_to_ascii)
             workbook.add_table(sheet_name, table)
 
         return workbook
     
 
     @staticmethod
-    def read_excel_to_workbook(file_path: str) -> 'Workbook':
+    def read_excel_to_workbook(file_path: str, rename_columns_to_ascii: bool = False) -> 'Workbook':
         workbook = Workbook()
         excel_data = pd.read_excel(file_path, sheet_name=None)
         
         for sheet_name, df in excel_data.items():
-            table = Table(df)
+            table = Table(df, rename_columns_to_ascii=rename_columns_to_ascii)
             workbook.add_table(sheet_name, table)
            
         return workbook
