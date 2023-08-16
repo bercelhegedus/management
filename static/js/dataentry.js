@@ -205,7 +205,10 @@ document.addEventListener('change', function(event) {
         dropdowns.forEach(dropdown => {
             dropdown.disabled = !event.target.checked;
             // Reset dropdown value
-            dropdown.selectedIndex = 0;
+            if (!event.target.checked) {
+                dropdown.selectedIndex = 0;
+                $(dropdown).trigger('change');
+            }         
         });
 
         // Set date input to today's date if checkbox is checked
@@ -219,6 +222,11 @@ document.addEventListener('change', function(event) {
         else {
             const dateInput = row.querySelector('input[type="date"]');
             dateInput.value = '';
+        }
+        // Reset number input to original value if checkbox is unchecked
+        if (!event.target.checked) {
+            const numberInput = row.querySelector('input[type="number"]');
+            numberInput.value = numberInput.defaultValue;
         }
     }
 });

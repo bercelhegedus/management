@@ -1,4 +1,5 @@
 from flask import Flask, render_template, request, send_file, jsonify, make_response, Blueprint
+from flask_login import LoginManager, login_user, login_required, logout_user, current_user
 import os
 import logging
 from normhours2 import process_excel, process_spreadsheet, process_all
@@ -9,6 +10,7 @@ import io
 update_blueprint = Blueprint('update_update_blueprint', __name__)
 
 @update_blueprint.route('/update', methods=['GET', 'POST'])
+@login_required
 def index():
     return render_template('update_index.html')
 

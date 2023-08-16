@@ -43,7 +43,7 @@ def process_all(data_workbook, norms_workbook, mod_workbook):
 
     if 'Hegesztes' in data_workbook.tables.keys():
         logging.info("Processing hegesztes...")
-        hegesztes = process_hegesztes(data_workbook.get_table('Hegesztes'), norms_workbook.get_table('Hegesztes'), mod_workbook.get_table('Anyag'), izometria=data_workbook.get_table('Izometrialap'))
+        hegesztes = process_hegesztes(data_workbook.get_table('Hegesztes'), norms_workbook.get_table('Hegesztes'), mod_workbook.get_table('Anyag'), izometrialap=data_workbook.get_table('Izometrialap'))
         hegesztes = apply_magassag_modifier(hegesztes, mod_workbook.get_table('Magassag'), izometria=data_workbook.get_table('Izometrialap'))
         data_workbook.add_table('Hegesztes', hegesztes)
 
@@ -71,7 +71,12 @@ def process_all(data_workbook, norms_workbook, mod_workbook):
 def process_excel(input, output):
     logging.info(f"Reading input from {input}...")
     data_workbook = Workbook.read_excel_to_workbook(input)
-    
+
+    #drop from all tables where ID is Nan
+    for table_name, table in data_workbook.tables.items():
+        if 'ID' in table.data.columns:
+            table.data = table.data.dropna(subset=['ID'])
+
     SERVICE_ACCOUNT_FILE = 'service_account.json'
     NORMASHEET_ID = '1Cd1PIhYJUQJd8Dr7XfcL31nd_ukNjAL-yqYGTFOVBh4'
     MODIFIER_ID = '1IYJj1j9i0c_8W4PR_tVr7sf98cp9mznpCpSp-0ITbnI'
@@ -104,21 +109,21 @@ def process_spreadsheet():
 
 
 
-def process_hegesztes(data: Table, norms: Table,anyag_modifier: Table, izometria: Table=None) -> Table:
+def process_hegesztes(data: Table, norms: Table,anyag_modifier: Table, izometrialap: Table=None) -> Table:
 
-    norms.rename_columns({'D': 'Külső átmérő', 'v': 'Falvastagság'})
+    norms.rename_columns({'D': 'Külső átmérő', 'v': 'Falvastagság'}, inplace=True)
     action = Interpolate2DAction(regressor_cols=['Külső átmérő', 'Falvastagság'], norms=norms, data_interpolated_col='Munkaóra', data_type_col='Típus')
     data = action.action(data)
     
     drop_col = False
     if not 'Anyagminoseg' in data.data.columns:
         drop_col = True
-        if not izometria:
+        if not izometrialap:
             return data 
-        if not 'Anyagminoseg' in izometria.data.columns:
+        if not 'Anyagminoseg' in izometrialap.data.columns:
             return data
         
-        data.data = pd.merge(data.data, izometria.data[['IzometrialapID','Anyagminoseg']], on='IzometrialapID', how='left')
+        data.data = pd.merge(data.data, izometrialap.data[['IzometrialapID','Anyagminoseg']], on='IzometrialapID', how='left')
 
     multiplier_action = MultiplierAction(anyag_modifier, 'Anyagminoseg', 'Szorzo', 'Munkaóra')
     data = multiplier_action.action(data)
@@ -130,21 +135,21 @@ def process_hegesztes(data: Table, norms: Table,anyag_modifier: Table, izometria
 
 
 def process_csotarto(data: Table, norms: Table) -> Table:
-    norms.rename_columns({'kg-ig': 'Súly'})
+    norms.rename_columns({'kg-ig': 'Súly'}, inplace=True)
     action = Interpolate1DAction(regressor_col='Súly', norms=norms, data_interpolated_col='Munkaóra', data_type_col='Típus')
     data = action.action(data)
     data.data['Munkaóra'] = data.data['Munkaóra'] * data.data['Súly']
     return data
 
 def process_csovezetek(data: Table, norms: Table) -> Table:
-    norms.rename_columns({'D': 'Külső átmérő', 'v': 'Falvastagság'})
+    norms.rename_columns({'D': 'Külső átmérő', 'v': 'Falvastagság'}, inplace=True)
     action = Interpolate2DAction(regressor_cols=['Külső átmérő', 'Falvastagság'], norms=norms, data_interpolated_col='Munkaóra', data_type_col='Típus')
     data = action.action(data)
     data.data['Munkaóra'] = data.data['Munkaóra'] * data.data['Hossz']
     return data
 
 def process_karimaszerelés(data: Table, norms: Table) -> Table:
-    norms.rename_columns({'DN': 'DN'})
+    norms.rename_columns({'DN': 'DN'}, inplace=True)
     
     
     if 'Nyomásfokozat' in data.data.columns:
@@ -162,7 +167,7 @@ def process_karimaszerelés(data: Table, norms: Table) -> Table:
 
 
 def process_nyomasproba(data: Table, norms: Table) -> Table:
-    norms.rename_columns({'D': 'Külső átmérő'})
+    norms.rename_columns({'D': 'Külső átmérő'}, inplace=True)
     action = Interpolate1DAction(regressor_col='Külső átmérő', norms=norms, data_interpolated_col='Munkaóra', data_type_col='Típus')
     data = action.action(data)
     data.data['Munkaóra'] = data.data['Munkaóra'] * data.data['Hossz']
@@ -171,7 +176,7 @@ def process_nyomasproba(data: Table, norms: Table) -> Table:
 
 if __name__ == '__main__':
     try:
-        process_excel('Torzs (2).xlsx', 'out2.xlsx')
+        process_excel('output.xlsx', 'out2.xlsx')
         #process_spreadsheet()
         pass
     except:

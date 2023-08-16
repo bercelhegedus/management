@@ -1,4 +1,5 @@
 from flask import Flask, jsonify, render_template, request, Blueprint
+from flask_login import LoginManager, login_user, login_required, logout_user, current_user
 import pandas as pd
 import  numpy as np
 from dataentry_get_data import create_combined_table, get_employees
@@ -108,6 +109,7 @@ def save_data():
 
 
 @dataentry_blueprint.route('/nyomonkovetes')
+@login_required
 def index():
     return render_template('dataentry_index.html')
 

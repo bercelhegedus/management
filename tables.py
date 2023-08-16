@@ -18,7 +18,6 @@ if TYPE_CHECKING:
 class Table:
     def __init__(self, data: pd.DataFrame):
         self.data = data
-        self.rename_columns_to_ascii()
 
     def __repr__(self):
         return self.data.__repr__()
@@ -39,7 +38,11 @@ class Table:
         self.data.drop([col for col in self.data.columns if col.endswith('_y')], axis=1, inplace=True)
 
     def rename_columns(self, columns: dict, inplace: bool = False) -> None:
-        self.data.rename(columns=columns, inplace=inplace)
+        if inplace:
+            self.data.rename(columns=columns, inplace=inplace)
+        else:
+            data = self.data.rename(columns=columns, inplace=inplace)
+            return Table(data)
 
     def rename_columns_to_ascii(self):
         self.data.columns = [unidecode(col) for col in self.data.columns]
