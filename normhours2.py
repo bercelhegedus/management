@@ -104,7 +104,7 @@ def process_spreadsheet():
     process_all(data_workbook, norms_workbook, modifier_workbook)
 
     logging.info(f"Writing output to {TORZSSHEET_ID}...")
-    data_workbook.write_to_google_sheets(SERVICE_ACCOUNT_FILE, TORZSSHEET_ID)
+    data_workbook.write_to_google_sheets(SERVICE_ACCOUNT_FILE, spreadsheet_id = TORZSSHEET_ID)
 
 
 
@@ -176,8 +176,8 @@ def process_nyomasproba(data: Table, norms: Table) -> Table:
 
 if __name__ == '__main__':
     try:
-        process_excel('output.xlsx', 'out2.xlsx')
-        #process_spreadsheet()
+        #process_excel('output.xlsx', 'out2.xlsx')
+        process_spreadsheet()
         pass
     except:
         traceback.print_exc()

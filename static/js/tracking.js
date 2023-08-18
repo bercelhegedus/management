@@ -78,7 +78,7 @@ function fetchData() {
                     if (typeData.type === 'number') {
                         rows += `<td><input type="number" class="editable" value="${row[header]}" disabled></td>`;
                     } else if (typeData.type === 'categorical') {
-                        rows += `<td><select class="select2value" id="dropdown-${header}-${rowIndex}" disabled><option value="" disabled></option></select></td>`;
+                        rows += `<td><select class="select2value" id="dropdown-${header}-${rowIndex}" disabled><option value="${row[header]}" disabled selected></option></select></td>`;
                     } else if (typeData.type === 'date') {
                         rows += `<td><input type="date" class="editable" value="${row[header]}" disabled></td>`;
                     } else {
@@ -97,7 +97,10 @@ function fetchData() {
             tableDropdowns.forEach(dropdown => {
                 const header = dropdown.id.split('-')[1]
                 const values = headerTypeMap[header].values;
-                populateDropdown(dropdown.id, values, header);
+                // if value is set use it for starting value and enable it as a selectable option, if value is "" use the header as starting value and disable it as a selectable option
+                const startingValue = dropdown.value ? dropdown.value : header;
+                const disableStartingValue = dropdown.value ? false : true;
+                populateDropdown(dropdown.id, values, startingValue, disableStartingValue);
             });
 
             table.style.display = 'block';
@@ -156,17 +159,21 @@ function recordData() {
     tableRows.forEach(row => {
         const rowData = {};
         const columns = row.querySelectorAll('td');
-
+    
         headers.forEach((header, index) => {
-            // +1 because the first column (index 0) is the checkbox
             const cell = columns[index + 1];
-            if (cell.querySelector('input')) {
-                rowData[header] = cell.querySelector('input').value;
-            } else {
-                rowData[header] = cell.textContent;
+            if (cell) {
+                if (cell.querySelector('input[type="number"]')) {
+                    rowData[header] = cell.querySelector('input[type="number"]').value;
+                } else if (cell.querySelector('.select2value')) {
+                    rowData[header] = cell.querySelector('.select2value').value;
+                } else if (cell.querySelector('input[type="date"]')) {
+                    rowData[header] = cell.querySelector('input[type="date"]').value;
+                } else {
+                    rowData[header] = cell.textContent;
+                }
             }
         });
-
         recordedData.push(rowData);
     });
 

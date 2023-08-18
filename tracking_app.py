@@ -2,15 +2,21 @@ from flask import Flask, jsonify, render_template, request, Blueprint
 from flask_login import LoginManager, login_user, login_required, logout_user, current_user
 import pandas as pd
 import  numpy as np
-from tracking_get_data import create_combined_table, get_employees
+from tracking_get_data import create_combined_table, get_employees, update_tracking, read_spreadsheets
 import pandas as pd
+import random
+import string
+from tables import Table
+import logging
 
 import pdb
 
 tracking_blueprint = Blueprint('tracking_blueprint', __name__)
 
-table = create_combined_table()
 
+data_workbook, nyomonkovetes_workbook = read_spreadsheets()
+nyomonkovetes = nyomonkovetes_workbook.get_table('Nyomonkovetes')
+table = create_combined_table(data_workbook, nyomonkovetes)
 
 
 column_types = pd.read_csv('tracking_columns.csv', dtype = str)
@@ -27,6 +33,8 @@ def get_table():
     kategoria = request.args.get('kategoria', None)
 
     df = table
+
+    df = df.fillna('')
 
     if izometria:
         df = df[df['Izometria'] == izometria]
@@ -103,10 +111,24 @@ def get_column_types(column_types: pd.DataFrame = column_types):
 
 @tracking_blueprint.route('/save_data', methods=['POST'])
 def save_data():
+    global table
     data = request.json
+    print(data)
     new_df = pd.DataFrame(data)
-    # Do whatever you want with the new_df
-    print(new_df)
+    new_df.dropna(subset=['Datum'], inplace=True)
+    new_df  = new_df[new_df['Datum'] != '']
+
+    new_df['ID'] = new_df['Izometria'].apply(lambda x: ''.join(random.choices(string.ascii_lowercase + string.digits, k=8)))
+
+    new_table = Table(new_df)
+    table_table = Table(table)
+    combined = table_table.join(new_table, how='left', on=['Izometria','Lap','Kategoria','Sorszam'])
+    table = combined.data
+
+    #table.to_csv('update.csv')
+
+    logging.info(f'Table updated.')
+    update_tracking(new_df)
     return jsonify({"message": "Data saved successfully!"})
 
 
