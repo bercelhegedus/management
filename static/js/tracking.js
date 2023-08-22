@@ -1,4 +1,3 @@
-// Function to populate the dropdown with unique values from column 'A'
 function populateDropdown(dropdownId, values, startingValue, disableStartingValue = true) {
     const $dropdown = $(`#${dropdownId}`);
 
@@ -15,7 +14,6 @@ function populateDropdown(dropdownId, values, startingValue, disableStartingValu
         $dropdown.append(placeholder);
     }
     
-
     // Append new options, do not add starting value to the list of options
 
     values.forEach(value => {
@@ -25,8 +23,11 @@ function populateDropdown(dropdownId, values, startingValue, disableStartingValu
         }
     });
 
-    // Re-initialize select2
-    $dropdown.select2().trigger('change');
+    $dropdown.select2(
+        {
+            width: '300px',
+        }
+    ).trigger('change');
 }
 
 let headers = []; // Global variable to store headers
@@ -46,14 +47,16 @@ function fetchData() {
     .then(data => {
         headers = Object.keys(data[0]);
         
+        console.log(data);
+
         // Fetch column data types for all headers in a single request
         const headersString = headers.join(',');
-        fetch(`/get_column_types?column_names=${headersString}&kategoria=${kategoria}`)
+        fetch(`/get_column_priority?column_names=${headersString}&kategoria=${kategoria}`)
         .then(response => response.json())
         .then(headerTypeMap => {
             headers.sort((a, b) => {
-                const priorityA = headerTypeMap[a].priority !== undefined ? headerTypeMap[a].priority : Infinity;
-                const priorityB = headerTypeMap[b].priority !== undefined ? headerTypeMap[b].priority : Infinity;
+                const priorityA = headerTypeMap[a] !== undefined ? headerTypeMap[a] : Infinity;
+                const priorityB = headerTypeMap[b] !== undefined ? headerTypeMap[b] : Infinity;
                 return priorityA - priorityB;
             });
                         
@@ -62,7 +65,7 @@ function fetchData() {
 
             // Create table headers based on validHeaders
             let headerRow = '<thead><tr>';
-            headerRow += '<th>Complete</th>';
+            headerRow += '<th>Modositas</th>';
             validHeaders.forEach(header => {
                 headerRow += `<th>${header}</th>`;
             });
@@ -72,17 +75,17 @@ function fetchData() {
             let rows = '<tbody>';
             data.forEach((row, rowIndex) => {
                 rows += '<tr>';
-                rows += '<td><input type="checkbox" class="task-completion"></td>';
+                rows += '<td class="checkbox-cell"><input type="checkbox" class="task-completion"></td>';                
                 validHeaders.forEach(header => {
-                    const typeData = headerTypeMap[header];
-                    if (typeData.type === 'number') {
-                        rows += `<td><input type="number" class="editable" value="${row[header]}" disabled></td>`;
-                    } else if (typeData.type === 'categorical') {
-                        rows += `<td><select class="select2value" id="dropdown-${header}-${rowIndex}" disabled><option value="${row[header]}" disabled selected></option></select></td>`;
-                    } else if (typeData.type === 'date') {
-                        rows += `<td><input type="date" class="editable" value="${row[header]}" disabled></td>`;
+                    if (row[header]['type'] === 'number') {
+                        rows += `<td class="numeric-cell"><input type="number" class="editable" value="${row[header]['value']}" disabled>`;
+                        rows += `<button class="set-max" max-value="${row[header]['max']}" disabled>Befejezve</button></td>`;
+                    } else if (row[header]['type'] === 'categorical') {
+                        rows += `<td><select class="select2value" id="dropdown-${header}-${rowIndex}" disabled><option value="${row[header]['value']}" disabled selected></option></select></td>`;
+                    } else if (row[header]['type'] === 'date') {
+                        rows += `<td><input type="date" class="editable" value="${row[header]['value']}" disabled></td>`;
                     } else {
-                        rows += `<td>${row[header]}</td>`;
+                        rows += `<td>${row[header]['value']}</td>`;
                     }
                 });
                 rows += '</tr>';
@@ -96,8 +99,9 @@ function fetchData() {
             const tableDropdowns = document.querySelectorAll('#data-table select.select2value');
             tableDropdowns.forEach(dropdown => {
                 const header = dropdown.id.split('-')[1]
-                const values = headerTypeMap[header].values;
-                // if value is set use it for starting value and enable it as a selectable option, if value is "" use the header as starting value and disable it as a selectable option
+                const rowid = dropdown.id.split('-')[2]
+                // get possible values from data by row index and header (accepted_values in data)
+                const values = data[rowid][header]["accepted_values"];
                 const startingValue = dropdown.value ? dropdown.value : header;
                 const disableStartingValue = dropdown.value ? false : true;
                 populateDropdown(dropdown.id, values, startingValue, disableStartingValue);
@@ -129,6 +133,10 @@ $('#dropdown-izometria').on('change', function() {
         .then(data => {
             populateDropdown('dropdown-lap', data, 'Lap');
             $('#dropdown-lap').prop('disabled', false); // Enable dropdown B
+            //Disable dropdown C
+            $('#dropdown-kategoria').prop('disabled', true);
+            //Reset dropdown C
+            $('#dropdown-kategoria').val(null).trigger('change');
         });
     } else {
         $('#dropdown-lap').prop('disabled', true); // Disable dropdown B if no value is selected for A
@@ -138,7 +146,7 @@ $('#dropdown-izometria').on('change', function() {
 $('#dropdown-lap').on('change', function() {
     const izometria = document.getElementById('dropdown-izometria').value;
     const lap = this.value;
-    if (izometria) {
+    if (lap) {
         fetch(`/get_unique_values_kategoria?izometria=${izometria}&lap=${lap}`)
         .then(response => response.json())
         .then(data => {
@@ -148,6 +156,10 @@ $('#dropdown-lap').on('change', function() {
     } else {
         $('#dropdown-lap').prop('disabled', true); // Disable dropdown B if no value is selected for A
     }
+});
+
+$('#dropdown-kategoria').on('change', function() {
+    fetchData();
 });
 
 let recordedData = []; // This will store the recorded data
@@ -178,10 +190,7 @@ function recordData() {
     });
 
     // Reset filters and table
-    document.getElementById('dropdown-izometria').selectedIndex = 0;
-    document.getElementById('dropdown-lap').selectedIndex = 0;
-    document.getElementById('dropdown-kategoria').selectedIndex = 0;
-    document.getElementById('data-table').innerHTML = '';
+    //document.getElementById('data-table').innerHTML = '';
 
     fetch('/save_data', {
         method: 'POST',
@@ -193,6 +202,7 @@ function recordData() {
     .then(response => response.json())
     .then(data => {
         console.log(data.message);
+        showToast(data.message);
     });
 }
 
@@ -201,12 +211,23 @@ document.addEventListener('change', function(event) {
     if (event.target.classList.contains('task-completion')) {
         const row = event.target.closest('tr');
         const inputs = row.querySelectorAll('input.editable');
+        //set max button
+        const setMaxButtons = row.querySelector('button.set-max');
         //Dropdowns with class select2value
         const dropdowns = row.querySelectorAll('select.select2value');
         // Toggle editability based on checkbox state
         inputs.forEach(input => {
             input.disabled = !event.target.checked;
         });
+        
+        if (event.target.checked) {
+            row.classList.remove('inactive-row'); // Remove the 'inactive-row' class when the checkbox is checked
+        } else {
+            row.classList.add('inactive-row'); // Add the 'inactive-row' class when the checkbox is unchecked
+        }        
+
+        // Toggle editability based on checkbox state
+        setMaxButtons.disabled = !event.target.checked;
 
         // Toggle editability based on checkbox state
         dropdowns.forEach(dropdown => {
@@ -238,3 +259,21 @@ document.addEventListener('change', function(event) {
     }
 });
 
+function showToast(message) {
+    const toast = document.getElementById("toast");
+    toast.textContent = message;
+    toast.classList.add("show");
+    
+    setTimeout(() => {
+        toast.classList.remove("show");
+    }, 3000); // The toast will disappear after 3 seconds
+}
+
+
+document.addEventListener('click', function(event) {
+    if (event.target.classList.contains('set-max')) {
+        const maxVal = event.target.getAttribute('max-value');
+        const inputElem = event.target.previousSibling;
+        inputElem.value = maxVal;
+    }
+});

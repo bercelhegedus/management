@@ -13,6 +13,7 @@
     </head>
 <body>
     <div>
+        <div id="toast" class="toast">This is a message!</div>
         <select class="select2filter" id="dropdown-izometria">
             <option disabled="" selected="" value="">Izometria</option>
         </select>
@@ -22,13 +23,14 @@
         <select class="select2filter" disabled="" id="dropdown-kategoria">
             <option disabled="" selected="" value="">Kategoria</option>
         </select>
-        <button onclick="fetchData()">Filter</button>
-        <button onclick="recordData()">Record</button>
+        <button onclick="recordData()">Mentes</button>
         <table id="data-table" style="display: none;"></table>
         <script src="{{ url_for('static', filename='js/tracking.js') }}"></script>
         <script>
             $(document).ready(function() {
-                $(".select2filter").select2();
+                $(".select2filter").select2({
+                    width: '300px'
+                });
             });
         </script>
         <script>

@@ -57,12 +57,7 @@ def create_combined_table(data_workbook, nyomonkovetes):
 def get_employees():
     employee_table_id = '1Jhl9lonUjIFtxq-5-SK1MEwqAtu5gYNdWoX2nClVTxU'
     employee_table = Workbook.read_google_sheets_to_workbook('service_account.json', employee_table_id).get_table('Hegesztok')
-    return employee_table.data
-
-
-def accapted_values(column_name: str):
-    if column_name == 'Elkeszitette':
-        return get_employees()['Azonosito'].unique().tolist()
+    return employee_table
 
 
 def update_tracking(new_records:pd.DataFrame):

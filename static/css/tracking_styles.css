@@ -117,3 +117,68 @@ button, .btn {
 button:hover, .btn:hover {
     background-color: #48637e;
 }
+
+.toast {
+    visibility: hidden;
+    max-width: 50%;
+    margin: auto;
+    background-color: #168a42;
+    text-align: center;
+    border-radius: 2px;
+    padding: 16px;
+    position: fixed;
+    z-index: 1;
+    left: 50%;
+    bottom: 30px;
+    font-size: 17px;
+    transform: translateX(-50%);
+    color: white;
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+.toast.show {
+    visibility: visible;
+    opacity: 1;
+    transition: opacity 0.5s;
+}
+
+.numeric-cell {
+    display: grid;
+}
+
+/* Style for the "Set to Max" button */
+.set-max {
+    background-color: white;
+    color: #333;
+    border: 1px solid #ccc;
+    padding: 3px 8px;
+    margin-left: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+/* Hover effect for the "Set to Max" button */
+.set-max:hover {
+    background-color: #f0f0f0;
+}
+
+.task-completion {
+    display: block;
+    margin: auto;  /* This will help in centering along with the flex properties on the parent */
+    width: 20px;   /* Adjust as needed */
+    height: 20px;  /* Adjust as needed */
+    border: 1px solid #333;  /* Optional: adding a border to make it prominent */
+    background-color: #f5f5f5;  /* Optional: light gray background */
+    opacity: 1;
+}
+
+/* Style for rows when they are not active */
+tr.inactive-row {
+    opacity: 0.5;
+}
+
+/* Override style for the checkbox cell in inactive rows to make it fully opaque */
+.checkbox-cell {
+    opacity: 1 !important;  /* The !important is used to ensure this style takes precedence */
+}
